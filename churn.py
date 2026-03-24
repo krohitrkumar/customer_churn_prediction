@@ -14,9 +14,8 @@ st.title("Customer Churn Intelligence System")
 
 # Load Data and Model
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
-data_path = os.path.join(BASE_DIR,"models", "processed.csv")
-model_path = os.path.join(BASE_DIR,"data","churn_model.pkl")
+data_path = os.path.join(BASE_DIR, "data", "processed.csv")
+model_path = os.path.join(BASE_DIR, "models", "churn_model.pkl")
 
 df = pd.read_csv(data_path)
 model = joblib.load(model_path)
