@@ -2,6 +2,7 @@
 
 A complete end-to-end machine learning project to predict customer churn and provide actionable strategies to improve customer retention.
 
+🚀 **Live Demo:** [Click here to use the app](https://customerchurnprediction-gsawlwntpmgq3ruxscepg7.streamlit.app/)
 ---
 
 ## 🔍 Overview
@@ -161,12 +162,8 @@ The project is deployed using Streamlit with an interactive UI.
 - Personalized retention strategies  
 
 ---
-
-## 🌐 Live Demo
-
-🔗 https://customerchurnprediction-gsawlwntpmgq3ruxscepg7.streamlit.app/
+## 📂 Project Structure
 <img width="614" height="483" alt="image" src="https://github.com/user-attachments/assets/ca85dd76-f57b-4500-a311-c730cc0c920a" />
-
 ---
 
 ## 💡 Business Impact
@@ -202,5 +199,5 @@ It demonstrates how machine learning can be applied in real-world scenarios to s
 
 ---
 
-## 📂 Project Structure
+
 
