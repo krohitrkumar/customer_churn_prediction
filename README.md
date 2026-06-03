@@ -2,7 +2,7 @@
 
 A complete end-to-end machine learning project to predict customer churn and provide actionable strategies to improve customer retention.
 
-🚀 **Live Demo:** [Click here to use the app](https://customerchurnprediction-gsawlwntpmgq3ruxscepg7.streamlit.app/)
+🚀 **Live Demo:** [Click here to use the app](https://customer-churn-prediction-krohitrkumar.streamlit.app/)
 ---
 
 ## 🔍 Overview
