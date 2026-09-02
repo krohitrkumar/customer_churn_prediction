@@ -1,4 +1,5 @@
 # backend/services/email_service.py
+import requests
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -8,7 +9,32 @@ class EmailService:
     @staticmethod
     def send_otp_email(to_email: str, otp_code: str) -> bool:
         """Sends a high-end, responsive HTML email containing the 6-digit OTP code."""
-        # 🟢 Fallback for local development when SMTP credentials are not yet configured
+        # 🟢 Priority 1: Resend HTTP API (HTTPS Port 443 — NEVER blocked on cloud hosting)
+        if getattr(settings, "RESEND_API_KEY", ""):
+            try:
+                res = requests.post(
+                    "https://api.resend.com/emails",
+                    headers={
+                        "Authorization": f"Bearer {settings.RESEND_API_KEY}",
+                        "Content-Type": "application/json"
+                    },
+                    json={
+                        "from": f"{settings.SMTP_FROM_NAME} <onboarding@resend.dev>",
+                        "to": [to_email],
+                        "subject": f"{otp_code} is your Retentrix verification code",
+                        "html": f"<div style='font-family:sans-serif;padding:24px;background:#0d1117;color:#fff;border-radius:8px;'><h2 style='color:#6366f1;'>Retentrix Verification Code</h2><p>Your 6-digit code is:</p><h1 style='letter-spacing:6px;color:#10b981;font-size:32px;'>{otp_code}</h1><p>Valid for 10 minutes.</p></div>"
+                    },
+                    timeout=5
+                )
+                if res.status_code in [200, 201]:
+                    print(f"✅ OTP email delivered via Resend API to {to_email}")
+                    return True
+                else:
+                    print(f"⚠️ Resend API returned {res.status_code}: {res.text}")
+            except Exception as e:
+                print(f"⚠️ Resend API error: {e}")
+
+        # 🟢 Priority 2: Fallback for local development when SMTP credentials are not yet configured
         if not settings.SMTP_USER or not settings.SMTP_PASSWORD:
             print(f"\n==================================================================")
             print(f"📧 [DEV MODE OTP] To: {to_email} | 6-Digit Code: {otp_code}")

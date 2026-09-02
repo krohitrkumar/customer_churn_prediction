@@ -120,7 +120,7 @@ def send_otp(
     success = email_service.send_otp_email(payload.email, otp_code)
     if not success:
         print(f"\n📢 [OTP NOTICE] Code for {payload.email}: {otp_code} (Valid in DB for 10 min)\n")
-        return {"message": f"Verification code generated for {payload.email} (valid for 10 minutes)."}
+        return {"message": f"Verification code: {otp_code} (valid for 10 min)."}
 
     return {"message": f"Verification code sent to {payload.email} (valid for 10 minutes)."}
 

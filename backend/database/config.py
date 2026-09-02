@@ -24,7 +24,8 @@ try:
             os.path.join(os.path.dirname(__file__), "..", "..", "ml_pipeline", "artifacts", "churn_model.pkl")
         )
 
-        # 🟢 Gmail SMTP Settings
+        # 🟢 Email Delivery Settings
+        RESEND_API_KEY: str = ""
         SMTP_HOST: str = "smtp.gmail.com"
         SMTP_PORT: int = 587
         SMTP_USER: str = ""
@@ -69,7 +70,8 @@ except ImportError:
             os.path.join(os.path.dirname(__file__), "..", "..", "ml_pipeline", "artifacts", "churn_model.pkl")
         ))
 
-        # 🟢 Gmail SMTP Settings Fallback
+        # 🟢 Email Delivery Settings Fallback
+        RESEND_API_KEY: str = os.getenv("RESEND_API_KEY", "")
         SMTP_HOST: str = os.getenv("SMTP_HOST", "smtp.gmail.com")
         SMTP_PORT: int = int(os.getenv("SMTP_PORT", "587"))
         SMTP_USER: str = os.getenv("SMTP_USER", "")
