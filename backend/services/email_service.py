@@ -275,7 +275,7 @@ https://retentrix.ai
             msg.attach(MIMEText(plain_text, "plain"))
             msg.attach(MIMEText(html_content, "html"))
 
-            with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT) as server:
+            with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT, timeout=15) as server:
                 server.starttls()
                 server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
                 server.sendmail(settings.SMTP_USER, to_email, msg.as_string())
