@@ -1,3 +1,10 @@
+import sys
+import os
+
+backend_dir = os.path.dirname(os.path.abspath(__file__))
+if backend_dir not in sys.path:
+    sys.path.insert(0, backend_dir)
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
@@ -38,6 +45,14 @@ app.include_router(prediction_routers, prefix=settings.API_PREFIX)
 app.include_router(customers_router, prefix=settings.API_PREFIX)
 app.include_router(auth_router, prefix=settings.API_PREFIX)
 app.include_router(analytics_router,prefix=settings.API_PREFIX)
+
+@app.get("/", tags=["Health"])
+def health_check():
+    return {
+        "status": "online",
+        "service": "Retentrix Churn Intelligence API",
+        "docs": "/docs"
+    }
 
 
 
