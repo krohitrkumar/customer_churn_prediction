@@ -275,16 +275,31 @@ https://retentrix.ai
             msg.attach(MIMEText(plain_text, "plain"))
             msg.attach(MIMEText(html_content, "html"))
 
-            with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT, timeout=15) as server:
-                server.starttls()
-                server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
-                server.sendmail(settings.SMTP_USER, to_email, msg.as_string())
+            # Attempt 1: Direct SSL (Port 465) - fast and universally allowed on cloud platforms
+            try:
+                with smtplib.SMTP_SSL(settings.SMTP_HOST, 465, timeout=8) as server:
+                    server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
+                    server.sendmail(settings.SMTP_USER, to_email, msg.as_string())
+                print(f"✅ OTP email successfully delivered via SSL (Port 465) to {to_email}")
+                return True
+            except Exception as ssl_err:
+                print(f"⚠️ Port 465 SSL failed ({ssl_err}), trying Port 587 TLS...")
 
-            print(f"✅ Premium OTP email successfully delivered to {to_email}")
-            return True
+            # Attempt 2: STARTTLS (Port 587) fallback
+            try:
+                with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT or 587, timeout=8) as server:
+                    server.starttls()
+                    server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
+                    server.sendmail(settings.SMTP_USER, to_email, msg.as_string())
+                print(f"✅ OTP email successfully delivered via TLS (Port 587) to {to_email}")
+                return True
+            except Exception as tls_err:
+                print(f"❌ Port 587 TLS failed ({tls_err})")
+
+            return False
 
         except Exception as e:
-            print(f"❌ Failed to send email via SMTP: {e}")
+            print(f"❌ Failed to send email: {e}")
             return False
 
 email_service = EmailService()

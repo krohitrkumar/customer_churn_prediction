@@ -18,7 +18,7 @@ const BASE_URL = getBaseUrl();
 const client = axios.create({
   baseURL: BASE_URL,
   headers: { 'Content-Type': 'application/json' },
-  timeout: 15000, // 15s default for regular API calls
+  timeout: 30000, // 30s default for regular API calls
 });
 
 // Separate client instance for file uploads — longer timeout (5 min)
