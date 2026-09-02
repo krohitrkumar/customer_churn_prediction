@@ -1,8 +1,8 @@
-# 🧠 Customer Churn Prediction & Retention System
+# 🧠 Customer Churn Prediction & Retention Intelligence System
 
-Hey there! 👋 Welcome to my **Customer Churn Prediction System**. 
+Hey there! 👋 Welcome to my **Customer Churn Prediction & Retention Intelligence System**. 
 
-This is a complete full-stack web application that uses Machine Learning to predict whether a customer is likely to leave (churn) or stay. It doesn’t just give a probability score — it also suggests **automated retention playbooks** (action plans) based on why the customer might be unhappy (like too many support calls, low satisfaction, or payment delays).
+This is a complete full-stack web application that uses Machine Learning to predict whether a customer is likely to leave (churn) or stay. It doesn’t just give a probability score — it also automatically generates **smart retention playbooks** (action plans) tailored to why the customer might be unhappy (like high support calls, low satisfaction rating, or late payment history).
 
 ---
 
@@ -11,40 +11,75 @@ This is a complete full-stack web application that uses Machine Learning to pred
 You can try the live application directly in your browser:
 
 * 🌐 **Frontend Web App (Live on Vercel):** [https://customerchurnprediction-roan.vercel.app](https://customerchurnprediction-roan.vercel.app)
-* ⚡ **Backend REST API (Live on Render):** [https://customer-churn-prediction-backend-y0q2.onrender.com](https://customer-churn-prediction-backend-y0q2.onrender.com)
-* 📖 **Interactive Swagger API Docs:** [https://customer-churn-prediction-backend-y0q2.onrender.com/docs](https://customer-churn-prediction-backend-y0q2.onrender.com/docs)
-* 🐘 **Database:** Neon PostgreSQL Cloud Database
+* ⚡ **Production Backend API (Live on Railway):** [https://web-production-f4a4f.up.railway.app](https://web-production-f4a4f.up.railway.app)
+* 📖 **Interactive Swagger API Docs:** [https://web-production-f4a4f.up.railway.app/docs](https://web-production-f4a4f.up.railway.app/docs)
+* 🐘 **Database:** Neon Serverless PostgreSQL Cloud Database
+* 📧 **Email Delivery:** Resend HTTPS Transactional Email API
+
+---
+
+## 🏗️ System Architecture
+
+```
+                       ┌─────────────────────────────────────────┐
+                       │           React 18 + Vite SPA           │
+                       │           (Hosted on Vercel)            │
+                       │  • Interactive Dashboard & Analytics    │
+                       │  • Pure SVG Arc Churn Risk Gauge        │
+                       │  • CSV/Excel Drag & Drop Upload Engine  │
+                       └────────────────────┬────────────────────┘
+                                            │
+                                            │ HTTPS (JSON / Form-Data)
+                                            ▼
+                       ┌─────────────────────────────────────────┐
+                       │          FastAPI REST Backend           │
+                       │          (Hosted on Railway)            │
+                       │  • JWT Auth & Role-Based Access         │
+                       │  • ML Inference Engine                  │
+                       │  • Automated Playbook Recommendation    │
+                       │  • Bulk File Processor (Pandas/OpenPyXL)│
+                       └───────┬────────────┬────────────┬───────┘
+                               │            │            │
+            ┌──────────────────┘            │            └──────────────────┐
+            ▼                               ▼                               ▼
+┌───────────────────────┐       ┌───────────────────────┐       ┌───────────────────────┐
+│  Neon PostgreSQL DB   │       │  Scikit-Learn Model   │       │   Resend Email API    │
+│  • Users & RBAC Roles │       │  • Gradient Boosting  │       │  • 6-Digit OTP Mails  │
+│  • Customer Profiles  │       │  • 7 Behavioral Input │       │  • Branded HTML UI    │
+│  • Prediction History │       │    Features Pipeline  │       │  • Instant 0.5s Send  │
+└───────────────────────┘       └───────────────────────┘       └───────────────────────┘
+```
 
 ---
 
 ## 💡 Why I Built This & The Story Behind It
 
 In subscription businesses (SaaS, Telecom, E-commerce), losing an existing customer costs 5x more than acquiring a new one. I wanted to build an end-to-end system where a Customer Success Manager or Business Owner can:
-1. View all their customer accounts in one clean dashboard.
+1. View all their customer accounts in one clean, responsive dashboard.
 2. Get real-time ML risk scores (Critical, Moderate, Low).
 3. Upload whole CSV or Excel spreadsheets (even with 1000+ rows) to batch predict churn instantly.
 4. Know **exactly what action to take** to retain the customer before they cancel.
 
 ### 🤖 How the Frontend was Built (AI Prompt Engineering)
 My core strengths are in **Machine Learning, Python, and Backend Development**. I had minimal prior frontend experience, so I built the entire React + Vite frontend using **iterative AI prompt engineering**:
-* I designed the system architecture, state flows, API requirements, and component layouts.
+* I designed the full system architecture, state management, API contracts, and component layouts.
 * Used targeted prompts to generate the UI components, interactive animated donut charts, custom SVG churn gauges, and client-side caching.
-* Solved real production challenges like upload timeouts and instant data rendering purely through architectural prompt guidance.
+* Solved real production challenges like upload timeouts, sliding JWT sessions, and instant data rendering purely through architectural prompt guidance.
 
 ---
 
 ## ✨ Key Features
 
-* **⚡ Real-Time Churn Scoring:** Enter customer data to get an instant churn probability score (0% to 100%) powered by a trained Gradient Boosting ML model.
-* **📋 Retention Playbooks:** Gives smart business recommendations based on profile conditions (e.g., offer 15% annual discount, assign priority technical support, schedule onboarding check-in).
-* **📁 Bulk CSV & Excel Uploader:** Upload `.csv` or `.xlsx` files. The system checks column names on the client-side first, skips duplicates, and runs AI predictions for the entire file.
+* **⚡ Real-Time ML Churn Scoring:** Enter customer behavioral metrics to get an instant churn probability score (0% to 100%) powered by a trained Gradient Boosting ML model.
+* **📋 Dynamic Retention Playbooks:** Generates actionable business strategies based on specific customer conditions (e.g., offer 15% annual renewal discount, assign priority technical support, schedule executive check-in).
+* **📁 Bulk CSV & Excel Uploader:** Upload `.csv` or `.xlsx` files. The system checks column names on the client-side first, skips duplicates, and runs AI predictions for the entire file in parallel.
 * **🌱 1-Click Demo Seed Generator:** Don't have sample data? Click the seed button on the dashboard to immediately populate 50 realistic accounts with live predictions.
-* **📊 Visual Analytics:** Breakdown of customer churn risk across contract lengths (Month-to-month, 1 year, 2 years), payment channels, and regions (including LATAM, Asia Pacific, North America, Europe).
-* **🔐 Secure Authentication & Roles:** 
-  * Passwords encrypted with `bcrypt`.
-  * Secure JWT tokens with 24-hour validity.
-  * 6-digit passwordless Email OTP sign-in.
-  * Role permissions (`admin`, `csm`, `user`).
+* **📊 Visual Risk Analytics:** Real-time breakdown of customer churn risk across contract lengths (Month-to-month, 1 year, 2 years), payment channels, and regions (North America, Europe, Asia Pacific, LATAM, Africa).
+* **🔐 Enterprise Authentication & Roles:** 
+  * Passwords securely hashed with `bcrypt`.
+  * Secure JWT session tokens with auto-refresh.
+  * 6-digit passwordless Email OTP sign-in with branded HTML emails delivered via **Resend API**.
+  * Role permissions: **Admin** (Full Access), **CSM** (Manage Customers & Run Predictions), and **Viewer** (Read-Only).
 
 ---
 
@@ -53,10 +88,11 @@ My core strengths are in **Machine Learning, Python, and Backend Development**. 
 | Layer | Technologies Used |
 | :--- | :--- |
 | **Frontend** | React 18, Vite, Radix UI Primitives, Axios, Custom CSS (Built via Prompt Engineering) |
-| **Backend** | Python 3.11, FastAPI, SQLAlchemy 2.0 ORM, Pydantic v2 |
+| **Backend** | Python 3.11/3.13, FastAPI, SQLAlchemy 2.0 ORM, Pydantic v2, Uvicorn |
 | **Machine Learning** | Scikit-Learn 1.7.1, GradientBoostingClassifier, Joblib, Pandas, NumPy |
 | **Database** | Neon Serverless PostgreSQL (Production) / SQLite (Local Dev) |
-| **Hosting & Deploy** | Vercel (Frontend SPA) + Render (FastAPI Web Service) |
+| **Email Service** | Resend HTTPS Email API (Transactional 6-Digit OTP Delivery) |
+| **Hosting & Cloud** | Railway (FastAPI Container) + Vercel (Edge CDN React Frontend) |
 
 ---
 
@@ -129,10 +165,9 @@ source venv/bin/activate
 pip install -r requirements.txt
 
 # Start FastAPI backend
-cd backend
-uvicorn main:app --reload --port 8000
+python main.py
 ```
-Your backend will be live at `http://localhost:8000`, and Swagger documentation at `http://localhost:8000/docs`.
+Your backend will be live at `http://localhost:8080`, and Swagger documentation at `http://localhost:8080/docs`.
 
 ### 3. Set up the Frontend
 Open a new terminal window:
@@ -141,7 +176,7 @@ cd frontend
 npm install
 npm run dev
 ```
-Open your browser and visit `http://localhost:3000` (or `http://localhost:5173`).
+Open your browser and visit `http://localhost:5173` (or `http://localhost:3000`).
 
 ---
 
@@ -151,12 +186,12 @@ Open your browser and visit `http://localhost:3000` (or `http://localhost:5173`)
 customer_churn_prediction/
 │
 ├── backend/                       # FastAPI Backend
-│   ├── main.py                    # Entrypoint & API routing
+│   ├── main.py                    # API routing & CORS configuration
 │   ├── database/                  # DB connection, security & config
 │   ├── models/                    # SQLAlchemy models (User, Customer, Prediction)
 │   ├── routes/                    # API endpoints (auth, customers, predict, analytics)
 │   ├── schemas/                   # Pydantic request/response schemas
-│   └── services/                  # ML prediction service & email OTP service
+│   └── services/                  # ML prediction service & Resend/SMTP email service
 │
 ├── frontend/                      # React 18 + Vite Frontend
 │   ├── src/
@@ -173,6 +208,8 @@ customer_churn_prediction/
 │   ├── data/                      # Dataset files
 │   └── artifacts/                 # Saved model (churn_model.pkl)
 │
+├── main.py                        # Root server entrypoint
+├── Procfile                       # Cloud deployment configuration
 └── requirements.txt               # Python package dependencies
 ```
 
