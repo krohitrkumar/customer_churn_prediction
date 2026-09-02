@@ -184,8 +184,47 @@ export default function RegisterPage() {
               error={errors.confirm}
               required
             />
+            <div className="field" style={{ marginBottom: 4 }}>
+              <label className="field-label">
+                Select Workspace Role <span className="field-required">*</span>
+              </label>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginTop: 4 }}>
+                {[
+                  { value: 'admin', label: 'Admin', desc: 'Full access & deletion' },
+                  { value: 'csm', label: 'CSM', desc: 'Customer success & playbooks' },
+                  { value: 'user', label: 'Viewer', desc: 'Read-only analytics' },
+                ].map((r) => (
+                  <button
+                    key={r.value}
+                    type="button"
+                    onClick={() => field('role', r.value)}
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'flex-start',
+                      gap: 3,
+                      padding: '10px 10px',
+                      borderRadius: 'var(--radius-md)',
+                      border: `1.5px solid ${form.role === r.value ? 'var(--brand-primary)' : 'var(--border-default)'}`,
+                      background: form.role === r.value ? 'rgba(99, 102, 241, 0.12)' : 'var(--bg-raised)',
+                      color: form.role === r.value ? 'var(--brand-primary-h)' : 'var(--text-primary)',
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                      transition: 'all 0.15s ease',
+                    }}
+                  >
+                    <span style={{ fontWeight: 600, fontSize: 'var(--text-sm)' }}>
+                      {r.value === 'admin' ? '🛡️ ' : r.value === 'csm' ? '💼 ' : '👤 '}{r.label}
+                    </span>
+                    <span style={{ fontSize: '10.5px', color: 'var(--text-muted)', lineHeight: 1.2 }}>
+                      {r.desc}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
             <Button type="submit" variant="primary" size="lg" fullWidth loading={loading}>
-              Create account & verify email
+              Create account & Get Started
             </Button>
           </form>
           <p className="auth-footer-text">
