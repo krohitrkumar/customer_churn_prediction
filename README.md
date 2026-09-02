@@ -7,7 +7,6 @@
 [![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)](https://react.dev)
 [![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-1.7.1-F7931E?logo=scikit-learn&logoColor=white)](https://scikit-learn.org)
 [![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-2.0-red)](https://sqlalchemy.org)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ---
 
@@ -626,7 +625,6 @@ Use the Swagger UI at `/docs` or call `POST /api/auth/register`:
 
 ---
 
-## 📄 License
 
 MIT © [Rohit Kumar](https://github.com/krohitrkumar)
 
