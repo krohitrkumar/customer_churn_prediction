@@ -626,7 +626,7 @@ Use the Swagger UI at `/docs` or call `POST /api/auth/register`:
 ---
 
 
-MIT © [Rohit Kumar](https://github.com/krohitrkumar)
+© [Rohit Kumar](https://github.com/krohitrkumar)
 
 ---
 
