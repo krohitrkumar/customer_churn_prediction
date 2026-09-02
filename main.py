@@ -10,11 +10,11 @@ from backend.main import app
 
 if __name__ == "__main__":
     import uvicorn
-    port_str = os.environ.get("PORT", "8000")
+    port_str = os.environ.get("PORT", "8080")
     try:
         port = int(port_str)
     except (ValueError, TypeError):
-        port = 8000
+        port = 8080
 
     print(f"🚀 Starting server on 0.0.0.0:{port}")
     uvicorn.run(app, host="0.0.0.0", port=port)
