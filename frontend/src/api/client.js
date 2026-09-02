@@ -10,7 +10,11 @@ function getBaseUrl() {
   if (!/^https?:\/\//i.test(clean)) {
     clean = `https://${clean}`;
   }
-  return clean.replace(/\/+$/, '');
+  clean = clean.replace(/\/+$/, '');
+  if (!clean.endsWith('/api')) {
+    clean = `${clean}/api`;
+  }
+  return clean;
 }
 
 const BASE_URL = getBaseUrl();
