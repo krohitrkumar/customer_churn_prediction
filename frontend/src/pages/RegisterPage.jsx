@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { registerUser, sendOtp } from '../api/auth';
+import { useAuth } from '../context/AuthContext';
+import { registerUser, loginUser, getMe } from '../api/auth';
 import { extractError } from '../api/client';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
@@ -22,13 +23,14 @@ const STRENGTH_COLORS = ['', '#ef4444', '#f59e0b', '#3b82f6', '#10b981', '#10b98
 
 export default function RegisterPage() {
   const navigate = useNavigate();
+  const { saveSession } = useAuth();
   const [form, setForm] = useState({
     first_name: '',
     last_name: '',
     email: '',
     password: '',
     confirm: '',
-    role: 'user',
+    role: 'admin',
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -59,8 +61,12 @@ export default function RegisterPage() {
         password: form.password,
         role: form.role,
       });
-      await sendOtp(form.email);
-      navigate(`/verify-otp?email=${encodeURIComponent(form.email)}&intent=register&pw=${encodeURIComponent(form.password)}`);
+      // Auto-login upon registration
+      const tokenData = await loginUser({ email: form.email, password: form.password });
+      localStorage.setItem('retentrix_token', tokenData.access_token);
+      const user = await getMe();
+      saveSession(tokenData.access_token, user);
+      navigate('/dashboard', { replace: true });
     } catch (err) {
       setServerError(extractError(err));
     } finally {
