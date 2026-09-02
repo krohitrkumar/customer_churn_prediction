@@ -1,6 +1,19 @@
 import axios from 'axios';
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+function getBaseUrl() {
+  const envUrl = import.meta.env.VITE_API_BASE_URL;
+  if (!envUrl) return '/api';
+  
+  let clean = String(envUrl).trim().replace(/^["']|["']$/g, '');
+  if (!clean) return '/api';
+  if (clean.startsWith('/')) return clean;
+  if (!/^https?:\/\//i.test(clean)) {
+    clean = `https://${clean}`;
+  }
+  return clean.replace(/\/+$/, '');
+}
+
+const BASE_URL = getBaseUrl();
 
 const client = axios.create({
   baseURL: BASE_URL,
