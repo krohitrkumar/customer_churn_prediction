@@ -1,0 +1,173 @@
+/* ============================================================
+   MODERN INTERACTIVE DONUT CHART — RiskPieChart.css
+   ============================================================ */
+
+.donut-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  width: 100%;
+  padding: 8px 4px;
+}
+
+@media (max-width: 600px) {
+  .donut-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+}
+
+.donut-chart-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.donut-svg {
+  overflow: visible;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.2));
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.donut-slice {
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  outline: none;
+}
+
+.donut-slice:hover,
+.donut-slice--active {
+  filter: brightness(1.15) drop-shadow(0 0 12px currentColor);
+  opacity: 1 !important;
+}
+
+/* ── Center Metric ── */
+.donut-center-group {
+  transition: all 0.2s ease;
+}
+
+.donut-center-num {
+  font-size: 26px;
+  font-weight: 800;
+  fill: var(--text-primary);
+  font-family: var(--font-sans);
+  letter-spacing: -0.03em;
+}
+
+.donut-center-label {
+  font-size: 11px;
+  font-weight: 600;
+  fill: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-family: var(--font-sans);
+}
+
+.donut-center-sub {
+  font-size: 10px;
+  font-weight: 500;
+  fill: var(--text-muted);
+  font-family: var(--font-sans);
+}
+
+/* ── Legend List ── */
+.donut-legend-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+  min-width: 180px;
+}
+
+.donut-legend-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 14px;
+  background: var(--bg-raised);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition-fast);
+  user-select: none;
+}
+
+.donut-legend-row:hover,
+.donut-legend-row--active {
+  background: var(--bg-hover);
+  border-color: var(--border-default);
+  transform: translateX(4px);
+  box-shadow: var(--shadow-sm);
+}
+
+.donut-legend-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.donut-legend-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.donut-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: box-shadow 0.2s ease;
+}
+
+.donut-legend-stats {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.donut-legend-count {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.donut-legend-pct {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ── Progress bar under each legend row ── */
+.donut-bar-track {
+  width: 100%;
+  height: 4px;
+  background: var(--border-subtle);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.donut-bar-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 0.4s ease, box-shadow 0.2s ease;
+}
+
+/* ── Empty State ── */
+.pie-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 36px 16px;
+  color: var(--text-muted);
+  text-align: center;
+  gap: 8px;
+  font-size: var(--text-sm);
+}

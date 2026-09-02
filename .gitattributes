@@ -1,0 +1,33 @@
+# Normalize line endings: always store LF in repo, checkout as native on each OS
+* text=auto
+
+# Explicitly force LF for source files
+*.js     text eol=lf
+*.jsx    text eol=lf
+*.ts     text eol=lf
+*.tsx    text eol=lf
+*.css    text eol=lf
+*.html   text eol=lf
+*.json   text eol=lf
+*.md     text eol=lf
+*.py     text eol=lf
+*.yml    text eol=lf
+*.yaml   text eol=lf
+*.toml   text eol=lf
+*.txt    text eol=lf
+*.env.example text eol=lf
+
+# Binary files — never diff or mangle
+*.pkl    binary
+*.joblib binary
+*.h5     binary
+*.pt     binary
+*.png    binary
+*.jpg    binary
+*.jpeg   binary
+*.gif    binary
+*.ico    binary
+*.woff   binary
+*.woff2  binary
+*.ttf    binary
+*.eot    binary

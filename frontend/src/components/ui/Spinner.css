@@ -1,0 +1,2 @@
+.spinner { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.spinner-arc { transform-origin: center; animation: spin 0.75s linear infinite; }

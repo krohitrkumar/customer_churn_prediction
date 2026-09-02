@@ -1,0 +1,14 @@
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: calc(var(--z-sticky) - 1);
+  backdrop-filter: blur(2px);
+  animation: fadeIn 0.15s ease;
+}
+
+@media (max-width: 1024px) {
+  .app-main {
+    margin-left: 0 !important;
+  }
+}

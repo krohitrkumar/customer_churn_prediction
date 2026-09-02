@@ -1,0 +1,44 @@
+.predict-layout {
+  display: grid;
+  grid-template-columns: 400px 1fr;
+  gap: var(--sp-6);
+  align-items: start;
+}
+
+@media (max-width: 1100px) {
+  .predict-layout { grid-template-columns: 1fr; }
+}
+
+.predict-form-card { height: fit-content; }
+
+.predict-result {
+  min-height: 300px;
+}
+
+.predict-loading,
+.predict-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.predict-empty h3 {
+  font-size: var(--text-lg);
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.predict-empty p {
+  max-width: 320px;
+  font-size: var(--text-sm);
+}
+
+.predict-gauge-card {
+  display: flex;
+  justify-content: center;
+}

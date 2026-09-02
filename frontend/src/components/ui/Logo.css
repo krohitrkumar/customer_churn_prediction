@@ -1,0 +1,6 @@
+.logo { display: inline-flex; align-items: center; gap: 10px; user-select: none; -webkit-user-select: none; -moz-user-select: none; pointer-events: none; text-decoration: none; }
+.logo--xs { gap: 6px; } .logo--sm { gap: 8px; } .logo--lg { gap: 12px; } .logo--xl { gap: 14px; }
+.logo-mark { flex-shrink: 0; -webkit-user-drag: none; filter: drop-shadow(0 2px 8px rgba(79,70,229,0.4)); }
+.logo-wordmark { font-family: var(--font-sans); font-weight: 700; letter-spacing: -0.03em; background: linear-gradient(135deg, #e2e8f0 0%, #818cf8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; pointer-events: none; white-space: nowrap; }
+.logo--xs .logo-wordmark { font-size: 13px; } .logo--sm .logo-wordmark { font-size: 15px; }
+.logo--md .logo-wordmark { font-size: 18px; } .logo--lg .logo-wordmark { font-size: 22px; } .logo--xl .logo-wordmark { font-size: 28px; }

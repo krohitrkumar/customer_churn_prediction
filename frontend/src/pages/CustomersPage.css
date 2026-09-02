@@ -1,0 +1,142 @@
+.customers-filters {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+/* 🟢 Risk Filter Tabs */
+.risk-tabs-bar {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  margin-bottom: 16px;
+}
+
+.risk-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: var(--bg-raised);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-full);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: var(--transition-fast);
+  font-family: var(--font-sans);
+}
+
+.risk-tab-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: var(--text-muted);
+}
+
+.risk-tab-btn--active {
+  background: rgba(79, 70, 229, 0.12);
+  color: #818cf8;
+  border-color: var(--brand-primary);
+}
+
+.risk-tab-count {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+  background: var(--bg-overlay);
+  color: var(--text-primary);
+}
+
+.risk-tab-btn--active .risk-tab-count {
+  background: var(--brand-primary);
+  color: #ffffff;
+}
+
+.search-bar {
+  position: relative;
+  flex: 1;
+  min-width: 220px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.search-input {
+  width: 100%;
+  height: 40px;
+  background: var(--bg-raised);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: 0 14px 0 38px;
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  outline: none;
+  transition: var(--transition-fast);
+  font-family: var(--font-sans);
+}
+.search-input::placeholder { color: var(--text-muted); }
+.search-input:focus { border-color: var(--brand-primary); box-shadow: 0 0 0 3px var(--brand-glow); }
+
+.customer-name-btn {
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  cursor: pointer;
+  padding: 0;
+  font-family: var(--font-sans);
+  text-align: left;
+  transition: var(--transition-fast);
+}
+.customer-name-btn:hover { color: var(--brand-primary-h); text-decoration: underline; }
+
+/* File Drop Zone for Bulk Upload */
+.file-drop-zone {
+  border: 2px dashed var(--border-default);
+  border-radius: var(--radius-lg);
+  padding: 36px 20px;
+  text-align: center;
+  cursor: pointer;
+  background: var(--bg-raised);
+  transition: var(--transition-fast);
+}
+.file-drop-zone:hover {
+  border-color: var(--brand-primary);
+  background: var(--bg-hover);
+}
+
+.template-download-btn {
+  background: none;
+  border: none;
+  color: var(--brand-primary-h);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px;
+  font-family: var(--font-sans);
+  text-decoration: underline;
+}
+.template-download-btn:hover {
+  color: var(--text-primary);
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 20px;
+}

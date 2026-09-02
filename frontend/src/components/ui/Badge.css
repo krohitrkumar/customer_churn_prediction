@@ -1,0 +1,12 @@
+.badge { display: inline-flex; align-items: center; gap: 5px; border-radius: var(--radius-full); font-weight: 500; letter-spacing: 0.02em; white-space: nowrap; line-height: 1; }
+.badge--sm  { font-size: 10px; padding: 3px 8px; }
+.badge--md  { font-size: var(--text-xs); padding: 4px 10px; }
+.badge--lg  { font-size: var(--text-sm); padding: 5px 12px; }
+.badge--default  { background: var(--bg-raised);    color: var(--text-secondary); border: 1px solid var(--border-default); }
+.badge--primary  { background: rgba(79,70,229,0.15); color: #818cf8; border: 1px solid rgba(79,70,229,0.3); }
+.badge--success  { background: var(--risk-low-bg);   color: var(--risk-low);      border: 1px solid rgba(16,185,129,0.3); }
+.badge--warning  { background: var(--risk-moderate-bg); color: var(--risk-moderate); border: 1px solid rgba(245,158,11,0.3); }
+.badge--danger   { background: var(--risk-critical-bg); color: var(--risk-critical); border: 1px solid rgba(239,68,68,0.3); }
+.badge--info     { background: rgba(59,130,246,0.1); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
+.badge--admin    { background: rgba(168,85,247,0.12); color: #c084fc; border: 1px solid rgba(168,85,247,0.3); }
+.badge-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
