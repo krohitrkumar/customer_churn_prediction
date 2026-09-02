@@ -1,633 +1,431 @@
-# 🧠 Customer Churn Intelligence Platform
+# 🧠 Retentrix — Customer Churn Intelligence Platform
 
-> A production-grade, full-stack AI system that predicts customer churn in real time, manages enterprise accounts, and delivers actionable retention playbooks — powered by a Gradient Boosting ML model served via a secure REST API.
+> An enterprise-grade, full-stack Machine Learning web application that predicts customer churn in real-time, scores account risk levels, manages customer portfolios, and delivers automated retention playbooks — powered by a serialized Gradient Boosting pipeline, a FastAPI REST backend, and a modern React 18 frontend built through AI prompt engineering.
 
-[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://python.org)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
-[![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)](https://react.dev)
-[![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-1.7.1-F7931E?logo=scikit-learn&logoColor=white)](https://scikit-learn.org)
-[![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-2.0-red)](https://sqlalchemy.org)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://customerchurnprediction-roan.vercel.app)
+[![API Docs](https://img.shields.io/badge/API%20Docs-Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black)](https://customer-churn-prediction-backend-y0q2.onrender.com/docs)
+[![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
+[![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Neon.tech-336791?style=for-the-badge&logo=postgresql&logoColor=white)](https://neon.tech)
+[![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-1.7.1-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white)](https://scikit-learn.org)
+
+---
+
+## 🚀 Live Deployments
+
+| Component | Platform | URL |
+| :--- | :--- | :--- |
+| **Frontend Web App** | Vercel | [https://customerchurnprediction-roan.vercel.app](https://customerchurnprediction-roan.vercel.app) |
+| **Backend REST API** | Render | [https://customer-churn-prediction-backend-y0q2.onrender.com](https://customer-churn-prediction-backend-y0q2.onrender.com) |
+| **Interactive API Docs** | Swagger UI | [https://customer-churn-prediction-backend-y0q2.onrender.com/docs](https://customer-churn-prediction-backend-y0q2.onrender.com/docs) |
+| **Database** | Neon PostgreSQL | Cloud Serverless PostgreSQL (`ep-winter-lab...aws.neon.tech`) |
 
 ---
 
 ## 📑 Table of Contents
 
-1. [What This Does](#-what-this-does)
-2. [System Architecture](#-system-architecture)
-3. [Project Structure](#-project-structure)
-4. [ML Pipeline](#-ml-pipeline)
-5. [Backend — FastAPI](#-backend--fastapi)
-   - [Database Models](#database-models)
-   - [API Endpoints](#api-endpoints)
-   - [Authentication & Security](#authentication--security)
-   - [Services](#services)
-6. [Frontend — React](#-frontend--react)
-7. [Feature Schema](#-feature-schema--model-inputs)
-8. [Setup & Running Locally](#-setup--running-locally)
-9. [Environment Variables](#-environment-variables)
-10. [Business Impact](#-business-impact)
+1. [Overview & Key Features](#-overview--key-features)
+2. [AI-Driven Frontend Engineering](#-ai-driven-frontend-engineering-prompt-engineering)
+3. [System Architecture](#-system-architecture)
+4. [Machine Learning Pipeline](#-machine-learning-pipeline)
+5. [Backend Architecture (FastAPI & SQLAlchemy)](#-backend-architecture-fastapi--sqlalchemy)
+   - [Database Schema (Neon PostgreSQL)](#database-schema-neon-postgresql)
+   - [API Reference](#api-reference)
+   - [Authentication & Role-Based Access Control](#authentication--role-based-access-control-rbac)
+   - [Services & Performance](#services--performance)
+6. [Frontend UI & Experience](#-frontend-ui--experience)
+7. [Dataset & Feature Schema](#-dataset--feature-schema)
+8. [Local Development & Setup](#-local-development--setup)
+9. [Production Deployment Guide](#-production-deployment-guide)
+10. [Business Impact & Playbooks](#-business-impact--playbooks)
 
 ---
 
-## 🎯 What This Does
+## 🎯 Overview & Key Features
 
-This platform gives Customer Success Managers (CSMs) and Admins a **real-time churn intelligence cockpit**:
+Retentrix provides Customer Success Managers (CSMs), Growth Teams, and Enterprise Executives with an actionable **churn intelligence command center**:
 
-- 📊 **Predict** the probability of a customer cancelling their subscription using a trained ML model
-- 🏢 **Manage** an enterprise customer database — create, update, delete, bulk-import via CSV/Excel
-- ⚠️ **Identify** which accounts are at Critical / Moderate / Low risk
-- 📋 **Serve retention playbooks** — rule-based automated recommendations triggered by the customer profile
-- 📈 **Visualize** analytics across contract types, geographies, and payment methods
-- 🔐 **Secure** every action behind JWT authentication with role-based access control (RBAC)
+- 🧠 **Real-Time ML Churn Scoring:** Ingests behavioral, contract, and billing metrics to output exact probability percentages (0–100%) and categorizes risk into **Critical**, **Moderate**, and **Low**.
+- 📋 **Automated Retention Playbooks:** Generates prescriptive, rule-driven playbook actions customized to why each customer is at risk (e.g. support queue prioritization, contract discounts, onboarding reviews).
+- 📂 **Smart Bulk CSV & Excel Uploader:** Client-side column pre-validation, drag-and-drop file ingestion, automatic duplicate skipping, and batch ML inference for thousands of accounts.
+- 📊 **Executive Analytics & Segment Breakdown:** Dynamic risk distribution across contract lengths, regions (LATAM, North America, Europe, Asia Pacific), and payment methods.
+- 🔐 **Enterprise Security & RBAC:** Passwords hashed with bcrypt, stateless JWT tokens with 24-hour expiration, passwordless 6-digit email OTP login, and role-based permissions (`admin`, `csm`, `user`).
+- ⚡ **1-Click Seed Generator:** Generates 50 realistic demo enterprise accounts with instant AI predictions for immediate evaluation.
+
+---
+
+## 🤖 AI-Driven Frontend Engineering (Prompt Engineering)
+
+The entire frontend client was architected, styled, and implemented leveraging **advanced AI pair-programming and prompt engineering**:
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                    PROMPT ENGINEERING METHODOLOGY                       │
+│                                                                         │
+│  Domain & Requirements   ──►  Iterative AI Generation  ──►   Component  │
+│  Specification                • Radix UI Primitives          Integration│
+│  • Token Normalization        • SVG Visualizations           & Cache    │
+│  • RBAC UI Gates              • Responsive Breakpoints       Validation │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+### Highlights of the AI-Engineered Frontend:
+* **Zero Frontend Boilerplate Knowledge Barrier:** Architected from high-level behavioral prompts into a modular, production-ready React 18 Single-Page Application.
+* **Component-Driven Design System:** Glassmorphic UI, custom CSS variables, accessible Radix UI dialogs, select dropdowns, and toast notification systems.
+* **Interactive Data Visualizations:** Custom SVG-based animated Churn Gauges and dynamic donut charts with hover glow effects and segment breakdowns.
+* **Client-Side Data Resilience:** Module-level caching with 30-second stale-while-revalidate TTL in custom hooks (`useCustomers.js`) to eliminate navigation lag and unnecessary network re-fetches.
+* **Smart File Upload Pipeline:** Client-side CSV/Excel header inspector validating required schema before payload transfer, paired with dedicated 5-minute timeout clients for large datasets.
 
 ---
 
 ## 🏗️ System Architecture
 
 ```
-┌───────────────────────────────────────────────────────────────────┐
-│                          CLIENT BROWSER                           │
-│                                                                   │
-│   React 18 + Vite  ──── Axios ────► FastAPI REST API             │
-│   (SPA, JWT auth,                   (port 8000)                   │
-│    role-based UI)                                                 │
-└───────────────────────────┬───────────────────────────────────────┘
-                            │
-            ┌───────────────▼───────────────┐
-            │        FastAPI Backend         │
-            │                               │
-            │  ┌─────────────────────────┐  │
-            │  │      Route Handlers     │  │
-            │  │  /auth  /customers      │  │
-            │  │  /predict  /analytics   │  │
-            │  └────────────┬────────────┘  │
-            │               │               │
-            │  ┌────────────▼────────────┐  │
-            │  │     Services Layer      │  │
-            │  │  MLService  EmailService│  │
-            │  └────────────┬────────────┘  │
-            │               │               │
-            │  ┌────────────▼────────────┐  │
-            │  │    SQLAlchemy ORM       │  │
-            │  │  PostgreSQL / SQLite    │  │
-            │  └─────────────────────────┘  │
-            │                               │
-            │  ┌─────────────────────────┐  │
-            │  │   ML Artifact (.pkl)    │  │
-            │  │  GradientBoostingPipeline│ │
-            │  │  serialized via Joblib  │  │
-            │  └─────────────────────────┘  │
-            └───────────────────────────────┘
-```
-
-**Data flow for a churn prediction:**
-1. Frontend sends customer feature data to `POST /api/predict/single`
-2. Backend validates JWT → checks role
-3. `MLService.predict_churn()` builds a pandas DataFrame and runs it through the serialized pipeline
-4. Pipeline applies `ColumnTransformer` (OneHotEncoder for categoricals) → `GradientBoostingClassifier`
-5. Returns `churn_probability` (0–100 scale), `risk_level`, and a list of `playbook_recommendations`
-6. Result is persisted to `prediction_history` and written back to the `customers` table
-7. Response sent to the React frontend for display
-
----
-
-## 📁 Project Structure
-
-```
-customer_churn_prediction/
-│
-├── backend/                          # FastAPI application
-│   ├── main.py                       # App factory, CORS middleware, router mounting
-│   ├── .env                          # Environment configuration (gitignored)
-│   │
-│   ├── database/
-│   │   ├── config.py                 # Pydantic Settings — all environment variables
-│   │   ├── connection.py             # SQLAlchemy engine, session factory, db_dependency
-│   │   └── security.py              # bcrypt hashing, JWT creation/decoding, RBAC guards
-│   │
-│   ├── models/                       # SQLAlchemy ORM table definitions
-│   │   ├── customer.py               # Customer, ContractType, PaymentMethod, Region enums
-│   │   ├── user.py                   # User, UserRole, OTPVerification
-│   │   └── prediction.py            # PredictionHistory
-│   │
-│   ├── schemas/                      # Pydantic request/response schemas
-│   │   ├── auth.py
-│   │   ├── customer.py
-│   │   ├── prediction.py
-│   │   └── analytics.py
-│   │
-│   ├── routes/                       # FastAPI route handlers
-│   │   ├── auth.py                   # Register, Login, OTP, Change/Reset Password
-│   │   ├── customers.py              # CRUD, Seed, Bulk CSV/Excel Upload with ML scoring
-│   │   ├── predictions.py            # Single prediction endpoint + history
-│   │   └── analytics.py             # Summary KPIs, risk breakdown, top-at-risk, activity
-│   │
-│   ├── services/
-│   │   ├── ml_services.py            # MLService: loads model, runs inference, generates playbooks
-│   │   └── email_service.py          # SMTP email delivery for OTP codes (HTML template)
-│   │
-│   └── middlewares/
-│       └── timing.py                 # ProcessTimeMiddleware — adds X-Process-Time header
-│
-├── frontend/                         # React 18 + Vite SPA
-│   ├── src/
-│   │   ├── api/                      # Axios API layer
-│   │   │   ├── client.js             # Axios instance, JWT interceptor, 401 redirect
-│   │   │   ├── auth.js               # Auth calls (login, register, OTP, password)
-│   │   │   ├── customers.js          # Customer CRUD + upload (5-min timeout) + seed
-│   │   │   ├── analytics.js          # Analytics API calls
-│   │   │   └── predictions.js        # Prediction API calls
-│   │   │
-│   │   ├── context/
-│   │   │   └── AuthContext.jsx       # Global auth state, role helpers, token management
-│   │   │
-│   │   ├── hooks/
-│   │   │   ├── useCustomers.js       # Module-level 30s cache — no re-fetch on navigation
-│   │   │   └── useToast.js           # Toast notification state manager
-│   │   │
-│   │   ├── pages/
-│   │   │   ├── LoginPage.jsx         # Email/password, OTP modal, forgot-password modal
-│   │   │   ├── RegisterPage.jsx      # New user registration form
-│   │   │   ├── OtpPage.jsx           # Passwordless email OTP sign-in
-│   │   │   ├── DashboardPage.jsx     # Executive KPIs, donut chart, segment tabs, activity
-│   │   │   ├── CustomersPage.jsx     # Customer table, bulk CSV upload, seed, risk tabs
-│   │   │   ├── CustomerDetailPage.jsx# Account detail + churn gauge + prediction history
-│   │   │   ├── PredictPage.jsx       # On-demand single prediction form
-│   │   │   └── SettingsPage.jsx      # Profile + two password-reset methods
-│   │   │
-│   │   └── components/
-│   │       ├── dashboard/            # KpiCard, RiskPieChart (interactive), ChurnGauge
-│   │       ├── customers/            # CustomerForm, RiskBadge
-│   │       ├── layout/               # Sidebar, TopBar, Layout wrapper
-│   │       ├── auth/                 # OtpInput (6-box slots)
-│   │       └── ui/                   # Button, Badge, Modal, Toast, Skeleton
-│   │
-│   ├── package.json
-│   └── vite.config.js               # Dev proxy: /api → http://localhost:8000
-│
-├── ml_pipeline/                      # Offline training pipeline
-│   ├── train.py                      # Trains and exports churn_model.pkl
-│   ├── data/
-│   │   └── processed.csv             # Labelled training dataset
-│   ├── artifacts/
-│   │   └── churn_model.pkl           # Serialized Scikit-Learn pipeline (loaded by backend)
-│   └── notebooks/
-│       └── customer_churn.ipynb      # Exploratory data analysis notebook
-│
-└── requirements.txt                  # All Python backend + ML dependencies
+┌─────────────────────────────────────────────────────────────────────────┐
+│                       CLIENT TIER (React 18 + Vite)                     │
+│                                                                         │
+│   Dashboard  │  Customer CRM  │  ML Predictor  │  CSV/Excel Importer    │
+│   • Hosted on Vercel Edge Network                                       │
+│   • Global Axios Client with JWT Auto-Injection                         │
+│   • Client-Side Pre-Validation & In-Memory Shared Cache                 │
+└────────────────────────────────────┬────────────────────────────────────┘
+                                     │ HTTPS / REST (JSON)
+                                     ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                       BACKEND API TIER (FastAPI)                        │
+│                                                                         │
+│  ┌───────────────────────┐  ┌──────────────────────┐  ┌──────────────┐  │
+│  │   Auth & Security     │  │   Customer Engine    │  │  Analytics   │  │
+│  │   • JWT / HS256       │  │   • CRUD Operations  │  │  • Aggregate │  │
+│  │   • bcrypt Hashing    │  │   • Batch Ingestion  │  │  • Breakdowns│  │
+│  │   • RBAC Middleware   │  │   • 1-Click Seeder   │  │  • Top At Risk│ │
+│  └───────────┬───────────┘  └──────────┬───────────┘  └───────┬──────┘  │
+│              │                         │                      │         │
+│  ┌───────────▼─────────────────────────▼──────────────────────▼──────┐  │
+│  │                       Services Layer                              │  │
+│  │   • MLService: Gradient Boosting Pipeline Inference (Scikit-Learn)│  │
+│  │   • EmailService: SMTP HTML OTP Delivery Engine                   │  │
+│  │   • ProcessTimeMiddleware: Request Latency Header Tracking        │  │
+│  └─────────────────────────────────────┬─────────────────────────────┘  │
+└────────────────────────────────────────┼────────────────────────────────┘
+                                         │ SQLAlchemy 2.0 ORM
+                                         ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                       DATABASE & STORAGE TIER                           │
+│                                                                         │
+│   Neon Serverless PostgreSQL (Production) / SQLite (Local Fallback)     │
+│   • `users` (Credentials & Roles)                                       │
+│   • `customers` (Account Attributes & Latest Churn Scores)              │
+│   • `prediction_history` (Audit Log of Historical Predictions)          │
+│   • `otp_verifications` (Time-bound OTP Tokens)                         │
+└─────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 🤖 ML Pipeline
+## 🔬 Machine Learning Pipeline
 
-### Model Architecture
-
-The ML artifact is a **Scikit-Learn Pipeline** with two sequential stages:
+### 1. Model Architecture
+The underlying champion model is a serialized **Scikit-Learn Pipeline** consisting of two integrated stages:
 
 ```
-Input DataFrame (7 features)
-        │
-        ▼
-┌───────────────────────────────────────────────────┐
-│  ColumnTransformer  (Preprocessing stage)         │
-│                                                   │
-│  Categorical → OneHotEncoder                      │
-│    drop='first', handle_unknown='ignore'          │
-│    • contract_type   → 2 binary columns           │
-│    • payment_method  → 2 binary columns           │
-│    • region          → 5 binary columns           │
-│                                                   │
-│  Numerical → passthrough (no scaling)             │
-│    • tenure_months, support_calls,                │
-│      late_payments, satisfaction_score            │
-└────────────────────────┬──────────────────────────┘
-                         │
-                         ▼
-┌───────────────────────────────────────────────────┐
-│  GradientBoostingClassifier                       │
-│    n_estimators   = 200   learning_rate = 0.05    │
-│    max_depth      = 5     random_state  = 42      │
-│    min_samples_split = 5  min_samples_leaf = 2    │
-└───────────────────────────────────────────────────┘
-        │
-        ▼
-   predict_proba → probability ×100 → stored as 0–100 float
-   predict       → binary label (0 = stay, 1 = churn)
+Raw Customer Features (7 parameters)
+                 │
+                 ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│ Stage 1: ColumnTransformer Preprocessing                                │
+│                                                                         │
+│ • Categorical Features: OneHotEncoder(drop='first', handle_unknown='ignore')│
+│   - `contract_type` (month_to_month, one_year, two_year)                │
+│   - `payment_method` (card, wallet, bank)                               │
+│   - `region` (north_america, europe, asia, latam, africa, south_america)│
+│                                                                         │
+│ • Numerical Features: Passthrough                                       │
+│   - `tenure_months`, `support_calls`, `late_payments`, `satisfaction_score`│
+└────────────────────────────────────┬────────────────────────────────────┘
+                                     │ Transformed Feature Vector
+                                     ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│ Stage 2: GradientBoostingClassifier                                     │
+│                                                                         │
+│ • n_estimators = 200        • learning_rate = 0.05                      │
+│ • max_depth = 5             • min_samples_split = 5                     │
+│ • min_samples_leaf = 2      • random_state = 42                         │
+└────────────────────────────────────┬────────────────────────────────────┘
+                                     │
+                                     ▼
+                      predict_proba[:, 1] × 100
+                                     │
+               ┌─────────────────────┴─────────────────────┐
+               ▼                                           ▼
+   Churn Probability Score                     Risk Band Classification
+          (0.0% – 100.0%)                      Critical / Moderate / Low
 ```
 
-### Risk Level Thresholds
+### 2. Risk Classification Rules
 
-| Churn Probability | Risk Level |
-|---|---|
-| > 75% | 🔴 **Critical** |
-| 40% – 75% | 🟠 **Moderate** |
-| < 40% | 🟢 **Low** |
+| Probability Score | Risk Band | Color Tag | System Implication |
+| :--- | :--- | :--- | :--- |
+| **> 75.0%** | 🔴 **Critical** | `#EF4444` | High likelihood of cancellation; immediate action required |
+| **40.0% – 75.0%** | 🟠 **Moderate** | `#F59E0B` | Showing early friction signals; proactive outreach needed |
+| **< 40.0%** | 🟢 **Low** | `#10B981` | Healthy, stable engagement; standard maintenance |
 
-### Retention Playbook Engine (Rule-Based Post-Processing)
+### 3. Automated Retention Playbooks
 
-After every prediction, the backend evaluates five independent trigger conditions and attaches relevant playbooks to the response:
+The backend evaluates customer profiles against 5 condition triggers to output personalized retention plays:
 
-| Trigger Condition | Playbook Category | Recommended Action |
-|---|---|---|
-| `satisfaction_score ≤ 3.0` | Customer Satisfaction | Trigger immediate executive outreach + customer survey |
-| `support_calls ≥ 5` | Support Queue Priority | Assign a Senior Technical Specialist to open tickets |
-| `late_payments ≥ 3` | Billing Flexibility | Offer payment restructuring or automated installment reminders |
-| `tenure_months < 12` | Onboarding Retention | Enroll in high-touch onboarding check-in call program |
-| `contract_type == month_to_month` | Contract Commitment | Offer 15% discount incentive for annual plan upgrade |
-| *(no conditions met)* | Healthy Account | Maintain standard quarterly automated product updates |
-
-### Training & Retraining
-
-```bash
-python ml_pipeline/train.py
-```
-
-Outputs evaluation metrics to console and overwrites `ml_pipeline/artifacts/churn_model.pkl`.
+| Trigger Condition | Playbook Category | Prescribed Intervention |
+| :--- | :--- | :--- |
+| `satisfaction_score <= 3.0` | **Customer Satisfaction** | Trigger immediate executive outreach and dispatch a diagnostic feedback survey. |
+| `support_calls >= 5` | **Support Queue Priority** | Assign a Senior Technical Specialist to resolve outstanding friction tickets. |
+| `late_payments >= 3` | **Billing Flexibility** | Offer payment restructuring or automated installment reminder workflow. |
+| `tenure_months < 12` | **Onboarding Retention** | Enroll customer in high-touch onboarding check-in call program. |
+| `contract_type == month_to_month` | **Contract Commitment** | Offer a 15% discount incentive for upgrading to an annual subscription plan. |
+| *(None of above)* | **Healthy Account** | Account is stable. Maintain standard automated quarterly product updates. |
 
 ---
 
-## ⚙️ Backend — FastAPI
+## ⚙️ Backend Architecture (FastAPI & SQLAlchemy)
 
-### Database Models
+### Database Schema (Neon PostgreSQL)
 
-#### `users` table
+```sql
+-- Users & Access Control
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    first_name VARCHAR(255),
+    last_name VARCHAR(255),
+    hashed_password VARCHAR(255) NOT NULL,
+    role VARCHAR(50) DEFAULT 'user' NOT NULL, -- 'admin', 'csm', 'user'
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
 
-| Column | Type | Notes |
-|---|---|---|
-| `id` | Integer PK | Auto-increment |
-| `email` | String(255) unique | Login identifier |
-| `first_name` | String(255) | Optional |
-| `last_name` | String(255) | Optional |
-| `hashed_password` | String(255) | bcrypt hash |
-| `role` | Enum | `admin` / `csm` / `user` |
-| `is_active` | Boolean | Default `true` |
-| `created_at` | DateTime (TZ) | Server default |
+-- Customer Database
+CREATE TABLE customers (
+    id SERIAL PRIMARY KEY,
+    customer_code VARCHAR(50) UNIQUE NOT NULL,
+    first_name VARCHAR(255) NOT NULL,
+    last_name VARCHAR(255) NOT NULL,
+    email VARCHAR(255),
+    tenure_months INTEGER NOT NULL,
+    support_calls INTEGER DEFAULT 0,
+    late_payments INTEGER DEFAULT 0,
+    satisfaction_score FLOAT NOT NULL,
+    contract_type VARCHAR(50) NOT NULL,
+    payment_method VARCHAR(50) NOT NULL,
+    region VARCHAR(50) NOT NULL,
+    latest_churn_score FLOAT,
+    latest_risk_level VARCHAR(50),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE
+);
 
-#### `otp_verifications` table
+-- Prediction Audit History
+CREATE TABLE prediction_history (
+    id SERIAL PRIMARY KEY,
+    customer_id INTEGER REFERENCES customers(id) ON DELETE CASCADE,
+    triggered_by_user_id INTEGER REFERENCES users(id),
+    churn_probability FLOAT NOT NULL,
+    risk_level VARCHAR(50) NOT NULL,
+    playbook_recommendations JSON,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
 
-| Column | Type | Notes |
-|---|---|---|
-| `id` | Integer PK | |
-| `email` | String(255) | Target address |
-| `otp_code` | String(6) | 6-digit random code |
-| `expires_at` | DateTime (TZ) | 10 minutes from creation |
-| `is_verified` | Boolean | Marked true after use |
-
-#### `customers` table
-
-| Column | Type | Notes |
-|---|---|---|
-| `id` | Integer PK | |
-| `customer_code` | String(50) unique | e.g. `CUST-1042` |
-| `first_name` | String(255) | |
-| `last_name` | String(255) | |
-| `email` | String(255) nullable | |
-| `tenure_months` | Integer | 1–72 |
-| `support_calls` | Integer | Default 0 |
-| `late_payments` | Integer | Default 0 |
-| `satisfaction_score` | Float | 1.0–10.0 |
-| `contract_type` | Enum | `month_to_month` / `one_year` / `two_year` |
-| `payment_method` | Enum | `card` / `wallet` / `bank` |
-| `region` | Enum | `north_america` / `europe` / `asia` / `latam` / `africa` / `south_america` |
-| `latest_churn_score` | Float nullable | Last churn probability (0–100) |
-| `latest_risk_level` | String(50) nullable | `Critical` / `Moderate` / `Low` |
-| `created_at` | DateTime (TZ) | |
-| `updated_at` | DateTime (TZ) | Auto-updates on edit |
-
-#### `prediction_history` table
-
-| Column | Type | Notes |
-|---|---|---|
-| `id` | Integer PK | |
-| `customer_id` | FK → customers.id | |
-| `triggered_by_user_id` | FK → users.id | |
-| `churn_probability` | Float | 0–100 |
-| `risk_level` | String(50) | |
-| `playbook_recommendations` | JSON | Array of playbook objects |
-| `created_at` | DateTime (TZ) | |
-
----
-
-### API Endpoints
-
-All routes are prefixed with `/api`. Interactive docs at `/docs`.
-
-#### 🔑 Auth — `/api/auth`
-
-| Method | Path | Auth Required | Role | Description |
-|---|---|---|---|---|
-| `POST` | `/auth/register` | ❌ | — | Register a new user account |
-| `POST` | `/auth/login` | ❌ | — | Login (form-data: username + password) → returns JWT |
-| `GET` | `/auth/me` | ✅ JWT | any | Get current user profile |
-| `POST` | `/auth/send_otp` | ❌ | — | Send 6-digit OTP to email (10-minute TTL) |
-| `POST` | `/auth/verify_otp` | ❌ | — | Verify OTP — returns access token if user exists |
-| `POST` | `/auth/change_password` | ✅ JWT | any | Change password (requires current password) |
-| `POST` | `/auth/reset_password` | ❌ | — | Reset password via OTP (no login required) |
-
-> **Login note:** Uses `application/x-www-form-urlencoded` with `username` (email) and `password` fields to comply with OAuth2PasswordRequestForm. All other endpoints accept JSON.
-
-**OTP passwordless login flow:**
-```
-POST /auth/send_otp  { email }
-POST /auth/verify_otp  { email, otp_code }  →  { access_token }
-```
-
-**Forgot password flow:**
-```
-POST /auth/send_otp  { email }
-POST /auth/reset_password  { email, otp_code, new_password }
+-- 6-Digit Email OTP Store
+CREATE TABLE otp_verifications (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255) NOT NULL,
+    otp_code VARCHAR(6) NOT NULL,
+    expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    is_verified BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
 ```
 
 ---
 
-#### 👥 Customers — `/api/customers`
+### API Reference
 
-| Method | Path | Auth | Role | Description |
-|---|---|---|---|---|
-| `GET` | `/customers/` | ✅ | any | List customers (`skip`, `limit` pagination) |
-| `POST` | `/customers/` | ✅ | admin, csm | Create a single customer |
-| `GET` | `/customers/{id}` | ✅ | any | Get customer by ID |
-| `PUT` | `/customers/{id}` | ✅ | admin, csm | Update customer profile |
-| `DELETE` | `/customers/{id}` | ✅ | admin | Permanently delete customer |
-| `POST` | `/customers/seed` | ✅ | admin, csm | Seed N demo accounts with live ML predictions |
-| `POST` | `/customers/upload_file` | ✅ | admin, csm | Bulk import CSV/Excel with automatic ML scoring |
+All routes are mounted under the `/api` prefix. Interactive documentation is available at `/docs`.
 
-**Bulk Upload — Smart Processing:**
-- Accepts `.csv`, `.xlsx`, `.xls`
-- Column names are **case-insensitive** (lowercased + underscored before matching)
-- **Required columns:** `customer_code`, `first_name`, `last_name`, `tenure_months`, `satisfaction_score`
-- **Optional columns:** `email`, `support_calls`, `late_payments`, `contract_type`, `payment_method`, `region`
-- Numeric values are clamped to valid model ranges; invalid rows are skipped gracefully
-- Duplicate `customer_code` rows are skipped automatically
-- Each new row gets a live ML prediction written to `prediction_history`
-- Returns: `{ imported, skipped, total_rows, message }`
+#### 🔐 Authentication (`/api/auth`)
+| Method | Endpoint | Auth | Role | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| `POST` | `/auth/register` | ❌ | Any | Register user profile & password |
+| `POST` | `/auth/login` | ❌ | Any | OAuth2 form login (`username`, `password`) → Returns JWT |
+| `GET` | `/auth/me` | ✅ | Any | Retrieve authenticated profile |
+| `POST` | `/auth/send_otp` | ❌ | Any | Send 6-digit email OTP (10-minute validity) |
+| `POST` | `/auth/verify_otp` | ❌ | Any | Verify OTP → Returns access token |
+| `POST` | `/auth/change_password` | ✅ | Any | Authenticated password change (validates old password) |
+| `POST` | `/auth/reset_password` | ❌ | Any | Reset password via verified OTP |
 
----
+#### 👥 Customer Management (`/api/customers`)
+| Method | Endpoint | Auth | Role | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| `GET` | `/customers/` | ✅ | Any | Paginated customer listing (`skip`, `limit`) |
+| `POST` | `/customers/` | ✅ | `admin`, `csm` | Register a single customer account |
+| `GET` | `/customers/{id}` | ✅ | Any | Fetch customer profile by ID |
+| `PUT` | `/customers/{id}` | ✅ | `admin`, `csm` | Update customer parameters |
+| `DELETE` | `/customers/{id}` | ✅ | `admin` | Permanently delete customer record |
+| `POST` | `/customers/seed` | ✅ | `admin`, `csm` | Seed 50 demo accounts with live ML scores |
+| `POST` | `/customers/upload_file` | ✅ | `admin`, `csm` | Bulk import CSV/Excel spreadsheets with ML scoring |
 
-#### 🧠 Predictions — `/api/predict`
+#### 🧠 Predictions (`/api/predict`)
+| Method | Endpoint | Auth | Role | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| `POST` | `/predict/single` | ✅ | Any | Run real-time churn prediction on profile |
+| `GET` | `/predict/history/{customer_id}` | ✅ | Any | Retrieve chronological prediction history for customer |
 
-| Method | Path | Auth | Description |
-|---|---|---|---|
-| `POST` | `/predict/single` | ✅ | Run ML prediction on a customer profile |
-| `GET` | `/predict/history/{customer_id}` | ✅ | Full prediction history for a customer |
-
-**Request body:**
-```json
-{
-  "tenure_months": 6,
-  "support_calls": 7,
-  "late_payments": 3,
-  "satisfaction_score": 2.5,
-  "contract_type": "month_to_month",
-  "payment_method": "card",
-  "region": "europe",
-  "customer_id": 42
-}
-```
-
-**Response:**
-```json
-{
-  "churn_prediction": 1,
-  "churn_probability": 87.34,
-  "risk_level": "Critical",
-  "playbooks": [
-    { "icon": "alert-circle", "category": "Customer Satisfaction", "action": "Trigger immediate executive outreach..." },
-    { "icon": "phone-call",   "category": "Support Queue Priority", "action": "Assign a Senior Technical Specialist..." }
-  ]
-}
-```
-
-If `customer_id` is provided, the result is persisted and the customer's `latest_churn_score` and `latest_risk_level` are updated.
+#### 📊 Executive Analytics (`/api/analytics`)
+| Method | Endpoint | Auth | Role | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| `GET` | `/analytics/summary` | ✅ | Any | Top-level KPIs (total accounts, avg churn, risk counts) |
+| `GET` | `/analytics/risk_breakdown` | ✅ | Any | Segment aggregations (by contract, region, payment) |
+| `GET` | `/analytics/top_at_risk` | ✅ | Any | Top critical accounts ordered by risk score |
+| `GET` | `/analytics/recent_activity` | ✅ | Any | Real-time stream of latest predictions |
 
 ---
 
-#### 📊 Analytics — `/api/analytics`
+### Authentication & Role-Based Access Control (RBAC)
 
-| Method | Path | Auth | Description |
-|---|---|---|---|
-| `GET` | `/analytics/summary` | ✅ | Executive KPI summary (totals, averages, risk counts) |
-| `GET` | `/analytics/risk_breakdown` | ✅ | Risk distribution by contract type, region, payment method |
-| `GET` | `/analytics/top_at_risk` | ✅ | Top N Critical-risk customers ordered by score |
-| `GET` | `/analytics/recent_activity` | ✅ | Latest prediction history feed |
-
-**Summary response fields:** `total_customers`, `scored_customers`, `avg_churn_score`, `avg_satisfaction_score`, `critical_risk_count`, `moderate_risk_count`, `low_risk_count`, `unscored_count`, `critical_rate_pct`
+* **Hashing:** `bcrypt` with unique salt generation per credential.
+* **Token Transport:** RFC 6750 `Authorization: Bearer <JWT_TOKEN>`.
+* **Roles:**
+  * `admin`: Complete administrative control, customer deletion, seed generation, user management.
+  * `csm`: Customer creation, profile modification, bulk upload, prediction execution.
+  * `user`: Read-only access to customer data, individual prediction tests, dashboard metrics.
 
 ---
 
-### Authentication & Security
+## 💻 Dataset & Feature Schema
 
-| Mechanism | Implementation |
-|---|---|
-| Password hashing | `bcrypt` with per-password salt |
-| JWT tokens | `python-jose` — HS256, 24-hour expiry |
-| Token transport | `Authorization: Bearer <token>` header |
-| Role enforcement | `require_role(*roles)` FastAPI dependency — raises 403 if role not in allowed list |
-| OTP security | 6-digit random int, 10-minute TTL, single-use flag (`is_verified`) |
-| Session expiry | Frontend clears localStorage and redirects on any 401 response |
+The Gradient Boosting pipeline expects 7 features:
 
-**Roles and permissions:**
-
-| Role | What they can do |
-|---|---|
-| `admin` | Everything — CRUD, delete, seed, upload, analytics, all routes |
-| `csm` | Create/edit customers, upload, run predictions, view analytics |
-| `user` | Read-only — view customers, run predictions, view analytics |
+| Feature | Type | Valid Range | Business Meaning & Significance |
+| :--- | :--- | :--- | :--- |
+| **`tenure_months`** | Integer | `1 – 72` | Months of continuous service. Higher tenure strongly reduces churn risk. |
+| **`support_calls`** | Integer | `0 – 20` | Support tickets opened. High volume indicates unresolved product friction. |
+| **`late_payments`** | Integer | `0 – 12` | Invoices paid after due date. Direct leading indicator of payment churn. |
+| **`satisfaction_score`** | Float | `1.0 – 10.0` | Customer CSAT rating. Ratings `<= 3.0` trigger critical escalation. |
+| **`contract_type`** | Categorical | `month_to_month`, `one_year`, `two_year` | Subscription term length. Month-to-month contracts have highest volatility. |
+| **`payment_method`** | Categorical | `card`, `wallet`, `bank` | Primary billing method. |
+| **`region`** | Categorical | `north_america`, `europe`, `asia`, `latam`, `africa`, `south_america` | Geographic market segment. |
 
 ---
 
-### Services
-
-**`MLService`** (`backend/services/ml_services.py`)
-- Loads `churn_model.pkl` once at server startup via `joblib`
-- Lazy-reloads if artifact was missing at startup
-- Converts SQLAlchemy enum values to raw strings before building the pandas DataFrame
-- Returns `churn_probability` as a percentage value (0–100)
-
-**`EmailService`** (`backend/services/email_service.py`)
-- Sends OTP codes via SMTP using Python's stdlib `smtplib` (no extra dependency)
-- Renders an HTML email template with the 6-digit code
-- **Dev mode:** if `SMTP_USER` is not configured, prints the OTP to console instead of sending — safe for local development
-- Configured via `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD` env vars
-
-**`ProcessTimeMiddleware`** (`backend/middlewares/timing.py`)
-- Attaches `X-Process-Time` header to every response for latency monitoring
-
----
-
-## ⚛️ Frontend — React
-
-Built with **React 18 + Vite**. All API calls go through a centralized Axios client.
-
-### Pages
-
-| Page | Route | Description |
-|---|---|---|
-| Login | `/login` | Email/password, OTP login modal, 2-step forgot-password modal |
-| Register | `/register` | New account creation |
-| OTP Sign-in | `/otp` | Passwordless sign-in via emailed 6-digit code |
-| Dashboard | `/dashboard` | KPI cards, interactive risk donut chart, segment breakdown tabs, recent activity feed |
-| Customers | `/customers` | Searchable, sortable customer table; risk filter tabs; bulk upload; seed |
-| Customer Detail | `/customers/:id` | Full profile, SVG churn gauge, prediction history timeline |
-| Predict | `/predict` | On-demand prediction form for any customer |
-| Settings | `/settings` | Profile + Method 1 (old password) + Method 2 (OTP reset) |
-
-### Key Architecture Decisions
-
-| Decision | Why |
-|---|---|
-| **Module-level 30s cache in `useCustomers`** | Prevents re-fetching the customer list on every page navigation; all components share the same in-memory snapshot |
-| **Separate `uploadClient` (5-min timeout)** | Bulk upload of 1000+ rows each needing ML inference can take several minutes; the default 15s timeout would false-positive |
-| **Client-side column validation before upload** | Reads CSV first line locally, detects missing required columns, shows an inline error without making any network request |
-| **Smart upload result messages** | Backend returns `{ imported, skipped, total_rows }`; frontend generates "All 1200 already existed" vs "3 of 50 imported" |
-| **Analytics fetched once on mount** | `useEffect` dependency is `[]` — dashboard analytics don't change just because customer count changes |
-
----
-
-## 📐 Feature Schema & Model Inputs
-
-| Feature | Type | Valid Range | Business Meaning |
-|---|---|---|---|
-| `tenure_months` | `int` | 1–72 | Months as an active subscriber — longer tenure = lower churn risk |
-| `support_calls` | `int` | 0–20 | Helpdesk contact volume — high calls signal customer friction |
-| `late_payments` | `int` | 0–12 | Delayed invoice count — positively correlated with churn |
-| `satisfaction_score` | `float` | 1.0–10.0 | Customer satisfaction rating — ≤ 3.0 triggers executive outreach playbook |
-| `contract_type` | `enum` | month_to_month / one_year / two_year | Short-term contracts show highest churn velocity |
-| `payment_method` | `enum` | card / wallet / bank | Invoice payment channel |
-| `region` | `enum` | north_america / europe / asia / latam / africa / south_america | Geographic market segment |
-
----
-
-## 🚀 Setup & Running Locally
+## 🛠️ Local Development & Setup
 
 ### Prerequisites
+* **Python 3.10+**
+* **Node.js 18+** & **npm**
+* **Git**
 
-- Python 3.10+
-- Node.js 18+
-- PostgreSQL *(or SQLite for quick local dev)*
-- Gmail account with App Password enabled *(for OTP emails — optional, prints to console in dev mode)*
-
-### 1. Clone
-
+### 1. Clone the Repository
 ```bash
 git clone https://github.com/krohitrkumar/customer_churn_prediction.git
 cd customer_churn_prediction
 ```
 
-### 2. Python Environment
-
+### 2. Backend Setup
 ```bash
+# Create and activate Python virtual environment
 python -m venv venv
 
-# Windows
+# Windows:
 venv\Scripts\activate
-# macOS / Linux
+# macOS / Linux:
 source venv/bin/activate
 
+# Install dependencies
 pip install -r requirements.txt
+
+# Create environment configuration
+cp backend/.env.example backend/.env
 ```
 
-### 3. Configure Environment Variables
-
-Create `backend/.env`:
-
+Edit `backend/.env` with your settings:
 ```env
-# Database — postgresql:// for Postgres, sqlite:///./churn.db for local dev
-DATABASE_URL=postgresql://user:password@localhost:5432/churn_db
-
-# JWT
-SECRET_KEY=your-256-bit-secret-here
+DATABASE_URL=sqlite:///./churn_database.db
+SECRET_KEY=your_development_secret_key_here
 ACCESS_TOKEN_EXPIRE_MINUTES=1440
-
-# Gmail SMTP (optional — OTP prints to console if not set)
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=your_email@gmail.com
-SMTP_PASSWORD=your_gmail_app_password
-SMTP_FROM_NAME=Customer Churn Intelligence
 ```
 
-> **Gmail App Password:** Google Account → Security → 2-Step Verification → App passwords → generate for "Mail".
-
-### 4. Train the ML Model
-
-```bash
-python ml_pipeline/train.py
-```
-
-Reads `ml_pipeline/data/processed.csv`, trains the Gradient Boosting pipeline, saves to `ml_pipeline/artifacts/churn_model.pkl`.
-
-### 5. Start the Backend
-
+Start the FastAPI development server:
 ```bash
 cd backend
 uvicorn main:app --reload --port 8000
 ```
+Swagger UI will be live at `http://localhost:8000/docs`.
 
-Interactive API docs available at `http://localhost:8000/docs`.
-
-### 6. Start the Frontend
-
+### 3. Frontend Setup
+In a new terminal window:
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
+The client dashboard will be available at `http://localhost:3000` (or `http://localhost:5173`), with all `/api` requests proxied to the backend automatically.
 
-Vite dev server proxies all `/api/*` requests to `http://localhost:8000`.
-
-### 7. Create Your First Admin Account
-
-Use the Swagger UI at `/docs` or call `POST /api/auth/register`:
-
-```json
-{
-  "email": "admin@company.com",
-  "password": "SecurePass123",
-  "first_name": "Admin",
-  "last_name": "User",
-  "role": "admin"
-}
+### 4. (Optional) Retrain ML Model Pipeline
+```bash
+python ml_pipeline/train.py
 ```
+This reads `ml_pipeline/data/processed.csv`, evaluates model recall/accuracy, and exports `ml_pipeline/artifacts/churn_model.pkl`.
 
 ---
 
-## 🔧 Environment Variables
+## 🌐 Production Deployment Guide
 
-| Variable | Required | Default | Description |
-|---|---|---|---|
-| `DATABASE_URL` | ✅ | — | SQLAlchemy-compatible DB URL |
-| `SECRET_KEY` | ✅ | hardcoded fallback | JWT signing key — **change in production** |
-| `ALGORITHM` | ❌ | `HS256` | JWT algorithm |
-| `ACCESS_TOKEN_EXPIRE_MINUTES` | ❌ | `1440` (24 h) | JWT token lifespan |
-| `SMTP_HOST` | ❌ | `smtp.gmail.com` | SMTP server host |
-| `SMTP_PORT` | ❌ | `587` | SMTP port |
-| `SMTP_USER` | ❌ | — | Sender email — leave blank for dev console mode |
-| `SMTP_PASSWORD` | ❌ | — | Gmail App Password |
-| `SMTP_FROM_NAME` | ❌ | `Customer Churn Intelligence` | Display name in sent emails |
-| `MODEL_PATH` | ❌ | auto-resolved | Absolute path to `churn_model.pkl` |
+### Deploy Backend to Render
 
----
-
-## 💡 Business Impact
-
-| Capability | Business Value |
-|---|---|
-| Real-time churn probability | CSMs see exact risk scores before customer calls |
-| Automated retention playbooks | Actions are pre-prescribed — no manual analysis needed |
-| Bulk CSV/Excel import with ML scoring | Onboard 1000+ existing accounts in one upload with instant predictions |
-| Role-based access control | Admins control data; CSMs operate; read-only users review |
-| Risk breakdown by segment | Identify which contract types, regions, or payment methods have highest churn rates |
-| Prediction history timeline | Track whether retention actions improved a customer's score over time |
-| OTP passwordless login | Fast, secure access for field CSMs without password management overhead |
-| Dev-mode OTP fallback | Zero config needed for local development — OTP prints to terminal |
+1. Create a new **Web Service** on [Render](https://dashboard.render.com).
+2. Connect your GitHub repository: `krohitrkumar/customer_churn_prediction`.
+3. Configure settings:
+   * **Root Directory:** `backend`
+   * **Runtime:** `Python 3`
+   * **Build Command:** `pip install -r ../requirements.txt`
+   * **Start Command:** `uvicorn main:app --host 0.0.0.0 --port $PORT`
+4. Add Environment Variables in the Render Dashboard:
+   * `PYTHON_VERSION` = `3.11.9`
+   * `DATABASE_URL` = `postgresql://<user>:<password>@<host>/<database>?sslmode=require`
+   * `SECRET_KEY` = `<your-secure-random-key>`
+   * `SMTP_USER` = `<your-gmail-address>` *(optional for OTP)*
+   * `SMTP_PASSWORD` = `<your-gmail-app-password>` *(optional for OTP)*
 
 ---
 
+### Deploy Frontend to Vercel
 
-© [Rohit Kumar](https://github.com/krohitrkumar)
+1. Import your GitHub repository on [Vercel](https://vercel.com/dashboard).
+2. Configure project settings:
+   * **Root Directory:** `frontend`
+   * **Framework Preset:** `Vite`
+   * **Build Command:** `npm run build`
+   * **Output Directory:** `dist`
+3. Add Environment Variable:
+   * `VITE_API_BASE_URL` = `https://<your-render-backend-url>/api`
+4. Click **Deploy**.
 
 ---
 
-*Built with Python, FastAPI, React 18, Scikit-Learn, and SQLAlchemy.*
+## 📈 Business Impact & Playbooks
+
+| Operational Metric | Before Retentrix | With Retentrix Platform |
+| :--- | :--- | :--- |
+| **Churn Identification** | Reactive (after cancellation notice) | **Proactive (30–60 days before contract expiry)** |
+| **CSM Triage Efficiency** | Manual spreadsheet aggregation | **Automated risk prioritization (Top-At-Risk Feed)** |
+| **Action Prescriptions** | Ad-hoc discounts | **Context-aware retention playbooks** |
+| **Batch Account Onboarding**| Slow manual data entry | **1-click CSV/Excel batch ML prediction import** |
+
+---
+
+## 📄 License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+---
+
+*Architected & Built by **[Rohit Kumar](https://github.com/krohitrkumar)**.*
