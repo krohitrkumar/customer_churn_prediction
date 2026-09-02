@@ -9,6 +9,187 @@ class EmailService:
     @staticmethod
     def send_otp_email(to_email: str, otp_code: str) -> bool:
         """Sends a high-end, responsive HTML email containing the 6-digit OTP code."""
+        # Build text & HTML email templates
+        plain_text = f"""Hello,
+
+Your 6-digit verification code for Retentrix is: {otp_code}
+
+This code will expire in 10 minutes.
+
+Security Notice:
+- Do not share this code with anyone.
+- Retentrix support staff will never ask for your verification code.
+
+Best regards,
+The Retentrix AI Security Team
+https://retentrix.ai
+"""
+
+        html_content = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retentrix Verification Code</title>
+    <style>
+        body {{
+            margin: 0;
+            padding: 0;
+            background-color: #f1f5f9;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: #1e293b;
+        }}
+        .wrapper {{
+            width: 100%;
+            background-color: #f1f5f9;
+            padding: 40px 15px;
+            box-sizing: border-box;
+        }}
+        .container {{
+            max-width: 540px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+            border: 1px solid #e2e8f0;
+        }}
+        .header {{
+            background: linear-gradient(135deg, #3730a3 0%, #4f46e5 100%);
+            padding: 32px 30px;
+            text-align: center;
+        }}
+        .logo-title {{
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin: 0;
+        }}
+        .logo-subtitle {{
+            color: #c7d2fe;
+            font-size: 13px;
+            margin-top: 4px;
+            font-weight: 500;
+        }}
+        .content {{
+            padding: 36px 32px;
+            background-color: #ffffff;
+        }}
+        .heading {{
+            font-size: 20px;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0 0 12px 0;
+        }}
+        .paragraph {{
+            font-size: 15px;
+            line-height: 1.6;
+            color: #475569;
+            margin: 0 0 24px 0;
+        }}
+        .code-container {{
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            margin: 28px 0;
+        }}
+        .code-label {{
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #64748b;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }}
+        .otp-digits {{
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 38px;
+            font-weight: 800;
+            letter-spacing: 8px;
+            color: #4338ca;
+            margin: 0;
+        }}
+        .expiry-badge {{
+            display: inline-block;
+            background-color: #fef3c7;
+            color: #b45309;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-top: 12px;
+        }}
+        .security-tips {{
+            background-color: #f8fafc;
+            border-radius: 8px;
+            padding: 16px;
+            border-left: 4px solid #6366f1;
+            margin-top: 24px;
+        }}
+        .security-tips h4 {{
+            margin: 0 0 8px 0;
+            font-size: 13px;
+            color: #1e293b;
+        }}
+        .security-tips ul {{
+            margin: 0;
+            padding-left: 18px;
+            color: #64748b;
+            font-size: 13px;
+            line-height: 1.5;
+        }}
+        .footer {{
+            background-color: #f8fafc;
+            padding: 24px 30px;
+            text-align: center;
+            border-top: 1px solid #e2e8f0;
+        }}
+        .footer p {{
+            font-size: 12px;
+            color: #94a3b8;
+            margin: 4px 0;
+            line-height: 1.4;
+        }}
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="container">
+            <div class="header">
+                <h1 class="logo-title">🧠 Retentrix Intelligence</h1>
+                <div class="logo-subtitle">Customer Churn & Retention Platform</div>
+            </div>
+            <div class="content">
+                <h2 class="heading">Security Verification Code</h2>
+                <p class="paragraph">
+                    You requested a one-time passcode to authenticate with your Retentrix account. Enter this code to verify your identity:
+                </p>
+                <div class="code-container">
+                    <div class="code-label">One-Time Passcode</div>
+                    <div class="otp-digits">{otp_code}</div>
+                    <div class="expiry-badge">⏱️ Expires in 10 minutes</div>
+                </div>
+                <div class="security-tips">
+                    <h4>🔒 Security Guidelines:</h4>
+                    <ul>
+                        <li>Never share this code with anyone.</li>
+                        <li>Retentrix staff will never ask for your verification code.</li>
+                        <li>If you did not request this code, you can safely ignore this email.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer">
+                <p>© 2026 Retentrix Intelligence Systems. All rights reserved.</p>
+                <p>Enterprise Machine Learning for Predictive Retention.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>"""
+
         # 🟢 Priority 1: Resend HTTP API (HTTPS Port 443 — NEVER blocked on cloud hosting)
         if getattr(settings, "RESEND_API_KEY", ""):
             try:
@@ -22,7 +203,7 @@ class EmailService:
                         "from": f"{settings.SMTP_FROM_NAME} <onboarding@resend.dev>",
                         "to": [to_email],
                         "subject": f"{otp_code} is your Retentrix verification code",
-                        "html": f"<div style='font-family:sans-serif;padding:24px;background:#0d1117;color:#fff;border-radius:8px;'><h2 style='color:#6366f1;'>Retentrix Verification Code</h2><p>Your 6-digit code is:</p><h1 style='letter-spacing:6px;color:#10b981;font-size:32px;'>{otp_code}</h1><p>Valid for 10 minutes.</p></div>"
+                        "html": html_content
                     },
                     timeout=5
                 )
