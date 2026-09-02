@@ -277,7 +277,7 @@ https://retentrix.ai
 
             # Attempt 1: Direct SSL (Port 465) - fast and universally allowed on cloud platforms
             try:
-                with smtplib.SMTP_SSL(settings.SMTP_HOST, 465, timeout=8) as server:
+                with smtplib.SMTP_SSL(settings.SMTP_HOST, 465, timeout=3) as server:
                     server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
                     server.sendmail(settings.SMTP_USER, to_email, msg.as_string())
                 print(f"✅ OTP email successfully delivered via SSL (Port 465) to {to_email}")
@@ -287,7 +287,7 @@ https://retentrix.ai
 
             # Attempt 2: STARTTLS (Port 587) fallback
             try:
-                with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT or 587, timeout=8) as server:
+                with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT or 587, timeout=3) as server:
                     server.starttls()
                     server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
                     server.sendmail(settings.SMTP_USER, to_email, msg.as_string())
