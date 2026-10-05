@@ -10,9 +10,9 @@ This is a complete full-stack web application that uses Machine Learning to pred
 
 You can try the live application directly in your browser:
 
-* 🌐 **Frontend Web App (Live on Vercel):** [https://customerchurnprediction-roan.vercel.app](https://customerchurnprediction-roan.vercel.app)
-* ⚡ **Production Backend API (Live on Railway):** [https://web-production-f4a4f.up.railway.app](https://web-production-f4a4f.up.railway.app)
-* 📖 **Interactive Swagger API Docs:** [https://web-production-f4a4f.up.railway.app/docs](https://web-production-f4a4f.up.railway.app/docs)
+* 🌐 **Frontend Web App (Live on Vercel):** [https://customerchurnprediction-id-l.vercel.app](https://customerchurnprediction-id-l.vercel.app)
+* ⚡ **Production Backend API (Live on Vercel):** [https://customer-churn-prediction-kappa-three.vercel.app](https://customer-churn-prediction-kappa-three.vercel.app)
+* 📖 **Interactive Swagger API Docs:** [https://customer-churn-prediction-kappa-three.vercel.app/docs](https://customer-churn-prediction-kappa-three.vercel.app/docs)
 * 🐘 **Database:** Neon Serverless PostgreSQL Cloud Database
 * 📧 **Email Delivery:** Resend HTTPS Transactional Email API
 
@@ -33,7 +33,7 @@ You can try the live application directly in your browser:
                                             ▼
                        ┌─────────────────────────────────────────┐
                        │          FastAPI REST Backend           │
-                       │          (Hosted on Railway)            │
+                       │          (Hosted on Vercel)            │
                        │  • JWT Auth & Role-Based Access         │
                        │  • ML Inference Engine                  │
                        │  • Automated Playbook Recommendation    │
@@ -92,7 +92,7 @@ My core strengths are in **Machine Learning, Python, and Backend Development**. 
 | **Machine Learning** | Scikit-Learn 1.7.1, GradientBoostingClassifier, Joblib, Pandas, NumPy |
 | **Database** | Neon Serverless PostgreSQL (Production) / SQLite (Local Dev) |
 | **Email Service** | Resend HTTPS Email API (Transactional 6-Digit OTP Delivery) |
-| **Hosting & Cloud** | Railway (FastAPI Container) + Vercel (Edge CDN React Frontend) |
+| **Hosting & Cloud** | Vercel (FastAPI Serverless Backend + React Frontend) |
 
 ---
 
@@ -219,6 +219,6 @@ customer_churn_prediction/
 
 **Rohit Kumar**
 * GitHub: [@krohitrkumar](https://github.com/krohitrkumar)
-* Live Project: [Retentrix Churn Intelligence](https://customerchurnprediction-roan.vercel.app)
+* Live Project: [Retentrix Churn Intelligence](https://customerchurnprediction-id-l.vercel.app)
 
 If you find this project helpful or interesting, feel free to give it a ⭐ on GitHub!
