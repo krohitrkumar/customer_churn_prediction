@@ -18,27 +18,24 @@ export default function LoginPage() {
 
   const sessionExpired = new URLSearchParams(location.search).get('session') === 'expired';
 
-  // Standard Login State
   const [form, setForm] = useState({ email: '', password: '' });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState('');
 
-  // OTP Login Modal State
   const [otpModalOpen, setOtpModalOpen] = useState(false);
   const [otpEmail, setOtpEmail] = useState('');
   const [otpCode, setOtpCode] = useState('');
-  const [otpStep, setOtpStep] = useState('email'); // 'email' | 'code'
+  const [otpStep, setOtpStep] = useState('email');
   const [otpLoading, setOtpLoading] = useState(false);
   const [otpError, setOtpError] = useState('');
   const [otpSuccess, setOtpSuccess] = useState('');
 
-  // Forgot Password Modal State
   const [forgotModalOpen, setForgotModalOpen] = useState(false);
   const [forgotEmail, setForgotEmail] = useState('');
   const [forgotOtp, setForgotOtp] = useState('');
   const [forgotNewPw, setForgotNewPw] = useState('');
-  const [forgotStep, setForgotStep] = useState('email'); // 'email' | 'reset'
+  const [forgotStep, setForgotStep] = useState('email');
   const [forgotLoading, setForgotLoading] = useState(false);
   const [forgotError, setForgotError] = useState('');
   const [forgotSuccess, setForgotSuccess] = useState('');
@@ -70,7 +67,6 @@ export default function LoginPage() {
     }
   }
 
-  // OTP Sign-in: Step 1 (Send Code)
   async function handleSendOtpLogin(e) {
     e.preventDefault();
     setOtpError('');
@@ -90,7 +86,6 @@ export default function LoginPage() {
     }
   }
 
-  // OTP Sign-in: Step 2 (Verify & Sign In)
   async function handleVerifyOtpLogin(e) {
     e.preventDefault();
     setOtpError('');
@@ -117,7 +112,6 @@ export default function LoginPage() {
     }
   }
 
-  // Forgot Password: Step 1 (Send Reset OTP)
   async function handleSendForgotOtp(e) {
     e.preventDefault();
     setForgotError('');
@@ -137,7 +131,6 @@ export default function LoginPage() {
     }
   }
 
-  // Forgot Password: Step 2 (Reset with OTP + New Password)
   async function handleResetPasswordSubmit(e) {
     e.preventDefault();
     setForgotError('');
@@ -166,7 +159,6 @@ export default function LoginPage() {
 
   return (
     <div className="auth-shell">
-      {/* Left hero banner */}
       <div className="auth-hero" aria-hidden="true">
         <div className="auth-hero-grid" />
         <div className="auth-hero-content">
@@ -190,7 +182,6 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Right sign-in form */}
       <div className="auth-panel">
         <div className="auth-form-wrapper anim-fade-up">
           <div className="auth-mobile-logo">
@@ -301,7 +292,6 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* ── Modal: Sign in with Email OTP ── */}
       <Modal
         open={otpModalOpen}
         onOpenChange={(o) => {
@@ -352,7 +342,6 @@ export default function LoginPage() {
         )}
       </Modal>
 
-      {/* ── Modal: Forgot Password / Passwordless Reset ── */}
       <Modal
         open={forgotModalOpen}
         onOpenChange={(o) => {

@@ -1,8 +1,8 @@
-from fastapi import APIRouter, HTTPException, status, Header, Depends,Request
+from fastapi import APIRouter, HTTPException, status, Header, Depends, Request
 from typing import Optional
 from database.config import settings
 from database.connection import db_dependency
-from schemas.auth import UserRegister, UserLogin, Token, UserOut, ChangePasswordRequest, SendOTPRequest, VerifyOTPRequest,ResetPasswordWithOTPRequest
+from schemas.auth import UserRegister, UserLogin, Token, UserOut, ChangePasswordRequest, SendOTPRequest, VerifyOTPRequest, ResetPasswordWithOTPRequest
 from database.security import hash_password, create_access_token, verify_password, get_current_user
 from models.user import User, UserRole, OTPVerification
 from services.email_service import email_service
@@ -11,12 +11,12 @@ import random
 from datetime import datetime, timedelta, timezone
 from middlewares.limiter import limiter
 from fastapi.security import OAuth2PasswordRequestForm
+
 router = APIRouter(
     prefix="/auth",
     tags=["Authentication"]
 )
 
-# 1. Register User
 @router.post("/register", response_model=UserOut, status_code=status.HTTP_201_CREATED)
 def register_user(
     payload: UserRegister,
@@ -40,9 +40,6 @@ def register_user(
     db.refresh(new_user)
     return new_user
 
-
-
-# 2. Login User 
 @router.post("/login", response_model=Token, status_code=status.HTTP_200_OK)
 @limiter.limit("5/minute")
 def login_user(
@@ -65,23 +62,18 @@ def login_user(
     access_token = create_access_token(subject=user.id)
     return Token(access_token=access_token, token_type="bearer")
 
-# 3. Get Current User Profile
-
 @router.get("/me", response_model=UserOut, status_code=status.HTTP_200_OK)
 def get_user_profile(
     current_user: User = Depends(get_current_user)
 ):
-    """Returns the profile of the current logged-in user."""
     return current_user
 
-# 4. Change Password Endpoint
 @router.post("/change_password", status_code=status.HTTP_200_OK)
 def change_password(
     payload: ChangePasswordRequest,
     db: db_dependency,
     current_user: User = Depends(get_current_user)
 ):
-    """Allows a logged-in user to securely change their password."""
     if not verify_password(payload.current_password, current_user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -130,7 +122,6 @@ async def send_otp(
 
     return {"message": f"Verification code sent to {payload.email} (valid for 10 minutes)."}
 
-# 6. Verify OTP
 @router.post("/verify_otp", status_code=status.HTTP_200_OK)
 def verify_otp(
     payload: VerifyOTPRequest,
@@ -166,19 +157,15 @@ def verify_otp(
 
     return {"message": "Email verified successfully."}
 
-
 @router.post("/reset_password", status_code=status.HTTP_200_OK)
 def reset_password_with_otp(
     payload: ResetPasswordWithOTPRequest,
     db: db_dependency
 ):
     now = datetime.now(timezone.utc)
-    
-    
     otp_record = db.query(OTPVerification).filter(
         OTPVerification.email == payload.email,
         OTPVerification.otp_code == payload.otp_code,
-        OTPVerification.is_verified == True,
         OTPVerification.expires_at > now
     ).first()
     if not otp_record:
@@ -195,7 +182,6 @@ def reset_password_with_otp(
         )
 
     user.hashed_password = hash_password(payload.new_password)
-
     db.delete(otp_record)
     db.commit()
     return {"message": "Password has been successfully reset."}

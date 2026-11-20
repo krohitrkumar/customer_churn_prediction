@@ -1,4 +1,3 @@
-# backend/services/email_service.py
 import requests
 import smtplib
 from email.mime.text import MIMEText
@@ -8,8 +7,6 @@ from database.config import settings
 class EmailService:
     @staticmethod
     def send_otp_email(to_email: str, otp_code: str) -> bool:
-        """Sends a high-end, responsive HTML email containing the 6-digit OTP code."""
-        # Build text & HTML email templates
         plain_text = f"""Hello,
 
 Your 6-digit verification code for Retentrix is: {otp_code}
@@ -19,10 +16,11 @@ This code will expire in 10 minutes.
 Security Notice:
 - Do not share this code with anyone.
 - Retentrix support staff will never ask for your verification code.
+- If you did not request this verification code, please ignore this email.
 
 Best regards,
 The Retentrix AI Security Team
-https://retentrix.ai
+Contact on GitHub: https://github.com/k_rohit_r_kumar
 """
 
         html_content = f"""<!DOCTYPE html>
@@ -31,166 +29,54 @@ https://retentrix.ai
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Retentrix Verification Code</title>
-    <style>
-        body {{
-            margin: 0;
-            padding: 0;
-            background-color: #f1f5f9;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            color: #1e293b;
-        }}
-        .wrapper {{
-            width: 100%;
-            background-color: #f1f5f9;
-            padding: 40px 15px;
-            box-sizing: border-box;
-        }}
-        .container {{
-            max-width: 540px;
-            margin: 0 auto;
-            background-color: #ffffff;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
-            border: 1px solid #e2e8f0;
-        }}
-        .header {{
-            background: linear-gradient(135deg, #3730a3 0%, #4f46e5 100%);
-            padding: 32px 30px;
-            text-align: center;
-        }}
-        .logo-title {{
-            color: #ffffff;
-            font-size: 22px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            margin: 0;
-        }}
-        .logo-subtitle {{
-            color: #c7d2fe;
-            font-size: 13px;
-            margin-top: 4px;
-            font-weight: 500;
-        }}
-        .content {{
-            padding: 36px 32px;
-            background-color: #ffffff;
-        }}
-        .heading {{
-            font-size: 20px;
-            font-weight: 700;
-            color: #0f172a;
-            margin: 0 0 12px 0;
-        }}
-        .paragraph {{
-            font-size: 15px;
-            line-height: 1.6;
-            color: #475569;
-            margin: 0 0 24px 0;
-        }}
-        .code-container {{
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            border: 2px dashed #cbd5e1;
-            border-radius: 12px;
-            padding: 24px;
-            text-align: center;
-            margin: 28px 0;
-        }}
-        .code-label {{
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #64748b;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }}
-        .otp-digits {{
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 38px;
-            font-weight: 800;
-            letter-spacing: 8px;
-            color: #4338ca;
-            margin: 0;
-        }}
-        .expiry-badge {{
-            display: inline-block;
-            background-color: #fef3c7;
-            color: #b45309;
-            font-size: 12px;
-            font-weight: 600;
-            padding: 4px 12px;
-            border-radius: 20px;
-            margin-top: 12px;
-        }}
-        .security-tips {{
-            background-color: #f8fafc;
-            border-radius: 8px;
-            padding: 16px;
-            border-left: 4px solid #6366f1;
-            margin-top: 24px;
-        }}
-        .security-tips h4 {{
-            margin: 0 0 8px 0;
-            font-size: 13px;
-            color: #1e293b;
-        }}
-        .security-tips ul {{
-            margin: 0;
-            padding-left: 18px;
-            color: #64748b;
-            font-size: 13px;
-            line-height: 1.5;
-        }}
-        .footer {{
-            background-color: #f8fafc;
-            padding: 24px 30px;
-            text-align: center;
-            border-top: 1px solid #e2e8f0;
-        }}
-        .footer p {{
-            font-size: 12px;
-            color: #94a3b8;
-            margin: 4px 0;
-            line-height: 1.4;
-        }}
-    </style>
 </head>
-<body>
-    <div class="wrapper">
-        <div class="container">
-            <div class="header">
-                <h1 class="logo-title">🧠 Retentrix Intelligence</h1>
-                <div class="logo-subtitle">Customer Churn & Retention Platform</div>
+<body style="margin: 0; padding: 0; background-color: #f1f5f9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #1e293b;">
+    <div style="width: 100%; background-color: #f1f5f9; padding: 40px 15px; box-sizing: border-box;">
+        <div style="max-width: 540px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0;">
+            <div style="background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%); padding: 36px 30px; text-align: center;">
+                <div style="display: inline-block; background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.2); padding: 6px 16px; border-radius: 9999px; color: #60a5fa; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px;">Retentrix AI Engine</div>
+                <h1 style="margin: 0; color: #ffffff; font-size: 24px; font-weight: 700;">Authentication Security</h1>
+                <p style="margin: 6px 0 0 0; color: #94a3b8; font-size: 13px;">AI Customer Churn Intelligence & Retention Platform</p>
             </div>
-            <div class="content">
-                <h2 class="heading">Security Verification Code</h2>
-                <p class="paragraph">
-                    You requested a one-time passcode to authenticate with your Retentrix account. Enter this code to verify your identity:
+            <div style="padding: 36px 32px 28px 32px;">
+                <h2 style="font-size: 18px; font-weight: 600; color: #0f172a; margin-top: 0; margin-bottom: 10px;">Verify Your Account</h2>
+                <p style="font-size: 14px; line-height: 1.6; color: #475569; margin-bottom: 24px;">
+                    You recently initiated an authentication request for your Retentrix account. 
+                    Please enter the 6-digit verification code below to securely verify your identity:
                 </p>
-                <div class="code-container">
-                    <div class="code-label">One-Time Passcode</div>
-                    <div class="otp-digits">{otp_code}</div>
-                    <div class="expiry-badge">⏱️ Expires in 10 minutes</div>
+                <div style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border: 2px dashed #cbd5e1; border-radius: 12px; padding: 22px; text-align: center; margin: 20px 0;">
+                    <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">One-Time Verification Code</div>
+                    <div style="text-align: center; margin: 0; padding: 0;">
+                        <span style="font-family: 'Courier New', Courier, monospace; font-size: 26px; font-weight: 800; letter-spacing: 4px; color: #2563eb; white-space: nowrap !important; display: inline-block; padding: 6px 18px; background-color: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px;">{otp_code}</span>
+                    </div>
                 </div>
-                <div class="security-tips">
-                    <h4>🔒 Security Guidelines:</h4>
-                    <ul>
-                        <li>Never share this code with anyone.</li>
-                        <li>Retentrix staff will never ask for your verification code.</li>
-                        <li>If you did not request this code, you can safely ignore this email.</li>
+                <div style="background-color: #fffbeb; border-left: 4px solid #f59e0b; border-radius: 6px; padding: 14px 16px; margin: 22px 0;">
+                    <p style="margin: 0; font-size: 13px; color: #92400e; line-height: 1.5;">⏳ <b style="color: #78350f;">Time Sensitive:</b> This verification code will expire in <b style="color: #78350f;">10 minutes</b>. Once expired, you will need to request a new code.</p>
+                </div>
+                <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px 18px; margin: 20px 0;">
+                    <h4 style="margin: 0 0 8px 0; font-size: 13px; color: #334155; font-weight: 600;">🔒 Security Guidelines:</h4>
+                    <ul style="margin: 0; padding-left: 18px; color: #64748b; font-size: 12px; line-height: 1.6;">
+                        <li>Never share this code with anyone, including Retentrix staff.</li>
+                        <li>We will never call or message you asking for your verification code.</li>
+                        <li>If you did not request this code, your credentials are safe, but you should review your account security.</li>
                     </ul>
                 </div>
+                <div style="border-top: 1px solid #e2e8f0; padding-top: 18px; margin-top: 22px;">
+                    <p style="font-size: 12px; color: #64748b; line-height: 1.5; margin: 0;">
+                        Need help or experiencing issues? Contact on GitHub at 
+                        <a href="https://github.com/k_rohit_r_kumar" style="color: #2563eb; text-decoration: none; font-weight: 600;">github.com/k_rohit_r_kumar</a>.
+                    </p>
+                </div>
             </div>
-            <div class="footer">
-                <p>© 2026 Retentrix Intelligence Systems. All rights reserved.</p>
-                <p>Enterprise Machine Learning for Predictive Retention.</p>
+            <div style="background-color: #f8fafc; padding: 22px 30px; text-align: center; border-top: 1px solid #e2e8f0;">
+                <p style="margin: 4px 0; font-size: 11px; color: #94a3b8;">© 2026 Retentrix Intelligence Systems Inc. All rights reserved.</p>
+                <p style="margin: 4px 0; font-size: 11px; color: #94a3b8;">Enterprise Machine Learning Platform for Predictive Customer Retention.</p>
             </div>
         </div>
     </div>
 </body>
 </html>"""
 
-        # 🟢 Priority 1: Resend HTTP API (HTTPS Port 443 — NEVER blocked on cloud hosting)
         if getattr(settings, "RESEND_API_KEY", ""):
             try:
                 res = requests.post(
@@ -208,18 +94,11 @@ https://retentrix.ai
                     timeout=5
                 )
                 if res.status_code in [200, 201]:
-                    print(f"✅ OTP email delivered via Resend API to {to_email}")
                     return True
-                else:
-                    print(f"⚠️ Resend API returned {res.status_code}: {res.text}")
-            except Exception as e:
-                print(f"⚠️ Resend API error: {e}")
+            except Exception:
+                pass
 
-        # 🟢 Priority 2: Fallback for local development when SMTP credentials are not yet configured
         if not settings.SMTP_USER or not settings.SMTP_PASSWORD:
-            print(f"\n==================================================================")
-            print(f"📧 [DEV MODE OTP] To: {to_email} | 6-Digit Code: {otp_code}")
-            print(f"==================================================================\n")
             return True
 
         try:
@@ -228,284 +107,27 @@ https://retentrix.ai
             msg["From"] = f"{settings.SMTP_FROM_NAME} <{settings.SMTP_USER}>"
             msg["To"] = to_email
 
-            # 1. Plain-text version (for low-bandwidth / legacy email clients)
-            plain_text = f"""
-Hello,
-
-Your 6-digit verification code for Retentrix is: {otp_code}
-
-This code will expire in 10 minutes.
-
-Security Notice:
-- Do not share this code with anyone.
-- Retentrix support staff will never ask for your verification code.
-
-If you did not request this verification code, please ignore this email or contact our support at support@retentrix.ai.
-
-Best regards,
-The Retentrix AI Security Team
-https://retentrix.ai
-            """
-
-            # 2. Premium Responsive HTML version
-            html_content = f"""
-            <!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Retentrix Verification Code</title>
-                <style>
-                    body {{
-                        margin: 0;
-                        padding: 0;
-                        background-color: #f1f5f9;
-                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-                        color: #1e293b;
-                        -webkit-font-smoothing: antialiased;
-                    }}
-                    .wrapper {{
-                        width: 100%;
-                        background-color: #f1f5f9;
-                        padding: 40px 15px;
-                        box-sizing: border-box;
-                    }}
-                    .container {{
-                        max-width: 540px;
-                        margin: 0 auto;
-                        background-color: #ffffff;
-                        border-radius: 16px;
-                        overflow: hidden;
-                        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
-                        border: 1px solid #e2e8f0;
-                    }}
-                    .header {{
-                        background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
-                        padding: 36px 30px;
-                        text-align: center;
-                    }}
-                    .logo-badge {{
-                        display: inline-block;
-                        background: rgba(255, 255, 255, 0.12);
-                        border: 1px solid rgba(255, 255, 255, 0.2);
-                        padding: 6px 16px;
-                        border-radius: 9999px;
-                        color: #60a5fa;
-                        font-size: 11px;
-                        font-weight: 700;
-                        letter-spacing: 1.5px;
-                        text-transform: uppercase;
-                        margin-bottom: 12px;
-                    }}
-                    .header h1 {{
-                        margin: 0;
-                        color: #ffffff;
-                        font-size: 24px;
-                        font-weight: 700;
-                        letter-spacing: -0.5px;
-                    }}
-                    .header p {{
-                        margin: 6px 0 0 0;
-                        color: #94a3b8;
-                        font-size: 13px;
-                    }}
-                    .content {{
-                        padding: 36px 32px 28px 32px;
-                    }}
-                    .greeting {{
-                        font-size: 18px;
-                        font-weight: 600;
-                        color: #0f172a;
-                        margin-top: 0;
-                        margin-bottom: 10px;
-                    }}
-                    .description {{
-                        font-size: 14px;
-                        line-height: 1.6;
-                        color: #475569;
-                        margin-bottom: 28px;
-                    }}
-                    .otp-card {{
-                        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-                        border: 2px dashed #cbd5e1;
-                        border-radius: 12px;
-                        padding: 24px;
-                        text-align: center;
-                        margin: 25px 0;
-                    }}
-                    .otp-label {{
-                        font-size: 11px;
-                        font-weight: 700;
-                        color: #64748b;
-                        text-transform: uppercase;
-                        letter-spacing: 1px;
-                        margin-bottom: 8px;
-                    }}
-                    .otp-code {{
-                        font-family: 'Courier New', Courier, monospace;
-                        font-size: 38px;
-                        font-weight: 800;
-                        letter-spacing: 8px;
-                        color: #2563eb;
-                        margin: 4px 0 0 0;
-                        user-select: all;
-                    }}
-                    .info-box {{
-                        background-color: #fffbeb;
-                        border-left: 4px solid #f59e0b;
-                        border-radius: 6px;
-                        padding: 14px 16px;
-                        margin: 24px 0;
-                    }}
-                    .info-box p {{
-                        margin: 0;
-                        font-size: 13px;
-                        color: #92400e;
-                        line-height: 1.5;
-                    }}
-                    .info-box b {{
-                        color: #78350f;
-                    }}
-                    .security-tips {{
-                        background-color: #f8fafc;
-                        border: 1px solid #e2e8f0;
-                        border-radius: 8px;
-                        padding: 16px 18px;
-                        margin: 20px 0;
-                    }}
-                    .security-tips h4 {{
-                        margin: 0 0 8px 0;
-                        font-size: 13px;
-                        color: #334155;
-                        font-weight: 600;
-                    }}
-                    .security-tips ul {{
-                        margin: 0;
-                        padding-left: 18px;
-                        color: #64748b;
-                        font-size: 12px;
-                        line-height: 1.6;
-                    }}
-                    .support-card {{
-                        border-top: 1px solid #e2e8f0;
-                        padding-top: 20px;
-                        margin-top: 24px;
-                    }}
-                    .support-text {{
-                        font-size: 12px;
-                        color: #64748b;
-                        line-height: 1.5;
-                        margin: 0;
-                    }}
-                    .support-text a {{
-                        color: #2563eb;
-                        text-decoration: none;
-                        font-weight: 600;
-                    }}
-                    .footer {{
-                        background-color: #f8fafc;
-                        padding: 24px 30px;
-                        text-align: center;
-                        border-top: 1px solid #e2e8f0;
-                    }}
-                    .footer p {{
-                        margin: 4px 0;
-                        font-size: 11px;
-                        color: #94a3b8;
-                    }}
-                    .footer a {{
-                        color: #64748b;
-                        text-decoration: underline;
-                    }}
-                </style>
-            </head>
-            <body>
-                <div class="wrapper">
-                    <div class="container">
-                        <!-- Brand Header -->
-                        <div class="header">
-                            <div class="logo-badge">Retentrix AI Engine</div>
-                            <h1>Authentication Security</h1>
-                            <p>AI Customer Churn Intelligence & Retention Platform</p>
-                        </div>
-
-                        <!-- Main Body Content -->
-                        <div class="content">
-                            <h2 class="greeting">Verify Your Account</h2>
-                            <p class="description">
-                                You recently initiated an authentication request for your Retentrix account. 
-                                Please enter the 6-digit verification code below to securely verify your identity:
-                            </p>
-
-                            <!-- OTP Box -->
-                            <div class="otp-card">
-                                <div class="otp-label">One-Time Verification Code</div>
-                                <div class="otp-code">{otp_code}</div>
-                            </div>
-
-                            <!-- Expiry Timer Notice -->
-                            <div class="info-box">
-                                <p>⏳ <b>Time Sensitive:</b> This verification code will expire in <b>10 minutes</b>. Once expired, you will need to request a new code.</p>
-                            </div>
-
-                            <!-- Security Notice -->
-                            <div class="security-tips">
-                                <h4>🔒 Security Guidelines:</h4>
-                                <ul>
-                                    <li>Never share this code with anyone, including Retentrix staff.</li>
-                                    <li>We will never call or message you asking for your verification code.</li>
-                                    <li>If you did not request this code, your credentials may be safe, but you should review your account security.</li>
-                                </ul>
-                            </div>
-
-                            <!-- Support Helpdesk Details -->
-                            <div class="support-card">
-                                <p class="support-text">
-                                    Need help or experiencing login issues? Our 24/7 Customer Success Team is here to assist you at 
-                                    <a href="mailto:support@retentrix.ai">support@retentrix.ai</a>.
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- Corporate Footer -->
-                        <div class="footer">
-                            <p>© 2026 Retentrix Intelligence Systems Inc. All rights reserved.</p>
-                            <p>Enterprise Machine Learning Platform for Predictive Customer Retention.</p>
-                            <p>This is an automated security transmission. Please do not reply directly to this email.</p>
-                        </div>
-                    </div>
-                </div>
-            </body>
-            </html>
-            """
-
             msg.attach(MIMEText(plain_text, "plain"))
             msg.attach(MIMEText(html_content, "html"))
 
-            # Attempt 1: Direct SSL (Port 465) - fast and universally allowed on cloud platforms
             try:
-                with smtplib.SMTP_SSL(settings.SMTP_HOST, 465, timeout=3) as server:
+                with smtplib.SMTP_SSL(settings.SMTP_HOST, 465, timeout=4) as server:
                     server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
                     server.sendmail(settings.SMTP_USER, to_email, msg.as_string())
-                print(f"✅ OTP email successfully delivered via SSL (Port 465) to {to_email}")
                 return True
-            except Exception as ssl_err:
-                print(f"⚠️ Port 465 SSL failed ({ssl_err}), trying Port 587 TLS...")
+            except Exception:
+                pass
 
-            # Attempt 2: STARTTLS (Port 587) fallback
             try:
-                with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT or 587, timeout=3) as server:
+                with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT or 587, timeout=4) as server:
                     server.starttls()
                     server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
                     server.sendmail(settings.SMTP_USER, to_email, msg.as_string())
-                print(f"✅ OTP email successfully delivered via TLS (Port 587) to {to_email}")
                 return True
-            except Exception as tls_err:
-                print(f"❌ Port 587 TLS failed ({tls_err})")
+            except Exception:
+                return False
 
-            return False
-
-        except Exception as e:
+        except Exception:
             return False
 
     @staticmethod
@@ -543,4 +165,4 @@ https://retentrix.ai
         except Exception:
             return False
 
-email_service = EmailService()
+email_service = EmailService()

@@ -66,7 +66,6 @@ export default function OtpPage() {
     setLoading(true);
     try {
       const res = await verifyOtp(email.trim(), otp.trim());
-      // Auto login if backend returned access token
       if (res.access_token) {
         localStorage.setItem('retentrix_token', res.access_token);
         const user = await getMe();
@@ -74,7 +73,6 @@ export default function OtpPage() {
         navigate('/dashboard', { replace: true });
         return;
       }
-      // Registration flow with saved password
       if (intent === 'register' && pw) {
         const tokenData = await loginUser({ email: email.trim(), password: decodeURIComponent(pw) });
         localStorage.setItem('retentrix_token', tokenData.access_token);

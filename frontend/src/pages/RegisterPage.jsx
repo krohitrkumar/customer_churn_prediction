@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { registerUser, loginUser, getMe } from '../api/auth';
+import { registerUser, sendOtp, loginUser, getMe } from '../api/auth';
 import { extractError } from '../api/client';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
@@ -57,16 +57,12 @@ export default function RegisterPage() {
       await registerUser({
         first_name: form.first_name.trim(),
         last_name: form.last_name.trim(),
-        email: form.email,
+        email: form.email.trim(),
         password: form.password,
         role: form.role,
       });
-      // Auto-login upon registration
-      const tokenData = await loginUser({ email: form.email, password: form.password });
-      localStorage.setItem('retentrix_token', tokenData.access_token);
-      const user = await getMe();
-      saveSession(tokenData.access_token, user);
-      navigate('/dashboard', { replace: true });
+      await sendOtp(form.email.trim());
+      navigate(`/verify-otp?email=${encodeURIComponent(form.email.trim())}&intent=register&pw=${encodeURIComponent(form.password)}`, { replace: true });
     } catch (err) {
       setServerError(extractError(err));
     } finally {
@@ -224,7 +220,7 @@ export default function RegisterPage() {
               </div>
             </div>
             <Button type="submit" variant="primary" size="lg" fullWidth loading={loading}>
-              Create account & Get Started
+              Create account & Verify Email
             </Button>
           </form>
           <p className="auth-footer-text">
