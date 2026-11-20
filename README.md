@@ -4,6 +4,16 @@
 
 ---
 
+## 🔗 Live Working Deployment
+
+* 🌐 **Frontend Web App (Live on Vercel):** [https://customerchurnprediction-id-l.vercel.app](https://customerchurnprediction-id-l.vercel.app)
+* ⚡ **Production Backend API (Live on Render):** [https://retentrix-ai.onrender.com](https://retentrix-ai.onrender.com)
+* 📖 **Interactive Swagger API Docs:** [https://retentrix-ai.onrender.com/docs](https://retentrix-ai.onrender.com/docs)
+* 🐘 **Database:** Neon Serverless PostgreSQL Cloud Database
+* 🚀 **In-Memory Cache:** Upstash Redis Cloud (<5ms latency)
+
+---
+
 ## 🏗️ High-Level System Architecture
 
 ```
