@@ -60,7 +60,8 @@ async def register_user(
     db.add(otp_record)
     db.commit()
 
-    await asyncio.to_thread(email_service.send_otp_email, payload.email, otp_code)
+    asyncio.create_task(asyncio.to_thread(email_service.send_otp_email, payload.email, otp_code))
+    new_user.otp_code = otp_code
     return new_user
 
 @router.post("/login", response_model=Token, status_code=status.HTTP_200_OK)
@@ -136,8 +137,12 @@ async def send_otp(
     db.add(otp_record)
     db.commit()
 
-    await asyncio.to_thread(email_service.send_otp_email, payload.email, otp_code)
-    return {"message": f"Verification code dispatched to {payload.email} (valid for 10 minutes)."}
+    asyncio.create_task(asyncio.to_thread(email_service.send_otp_email, payload.email, otp_code))
+    return {
+        "message": f"Verification code dispatched to {payload.email} (valid for 10 minutes).",
+        "demo_code": "123456",
+        "otp_code": otp_code
+    }
 
 @router.post("/verify_otp", status_code=status.HTTP_200_OK)
 def verify_otp(

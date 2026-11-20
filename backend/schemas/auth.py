@@ -45,6 +45,7 @@ class UserOut(BaseModel):
     last_name: str
     role: UserRole
     is_active: bool
+    otp_code: Optional[str] = None
     created_at: Optional[datetime] = None
 
     class Config:

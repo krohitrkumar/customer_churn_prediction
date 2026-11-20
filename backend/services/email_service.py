@@ -77,6 +77,28 @@ Contact on GitHub: https://github.com/k_rohit_r_kumar
 </body>
 </html>"""
 
+        if getattr(settings, "BREVO_API_KEY", ""):
+            try:
+                sender_email = settings.SMTP_USER or "retentrix.security@gmail.com"
+                res = requests.post(
+                    "https://api.brevo.com/v3/smtp/email",
+                    headers={
+                        "api-key": settings.BREVO_API_KEY,
+                        "Content-Type": "application/json"
+                    },
+                    json={
+                        "sender": {"name": settings.SMTP_FROM_NAME, "email": sender_email},
+                        "to": [{"email": to_email}],
+                        "subject": f"{otp_code} is your Retentrix verification code",
+                        "htmlContent": html_content
+                    },
+                    timeout=4
+                )
+                if res.status_code in [200, 201]:
+                    return True
+            except Exception:
+                pass
+
         if getattr(settings, "RESEND_API_KEY", ""):
             try:
                 res = requests.post(
@@ -91,7 +113,7 @@ Contact on GitHub: https://github.com/k_rohit_r_kumar
                         "subject": f"{otp_code} is your Retentrix verification code",
                         "html": html_content
                     },
-                    timeout=8
+                    timeout=3
                 )
                 if res.status_code in [200, 201]:
                     return True
@@ -112,7 +134,7 @@ Contact on GitHub: https://github.com/k_rohit_r_kumar
             msg.attach(MIMEText(html_content, "html"))
 
             try:
-                with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT or 587, timeout=8) as server:
+                with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT or 587, timeout=3) as server:
                     server.ehlo()
                     server.starttls()
                     server.ehlo()
@@ -123,7 +145,7 @@ Contact on GitHub: https://github.com/k_rohit_r_kumar
                 pass
 
             try:
-                with smtplib.SMTP_SSL(settings.SMTP_HOST, 465, timeout=8) as server:
+                with smtplib.SMTP_SSL(settings.SMTP_HOST, 465, timeout=3) as server:
                     server.ehlo()
                     server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
                     server.sendmail(settings.SMTP_USER, to_email, msg.as_string())

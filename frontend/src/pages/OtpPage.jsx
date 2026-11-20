@@ -16,12 +16,14 @@ export default function OtpPage() {
   const urlEmail = params.get('email') || '';
   const intent = params.get('intent') || 'login';
   const pw = params.get('pw') || '';
+  const urlCode = params.get('code') || '';
   const { saveSession } = useAuth();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState(urlEmail);
   const [emailSubmitted, setEmailSubmitted] = useState(!!urlEmail);
-  const [otp, setOtp] = useState('');
+  const [otp, setOtp] = useState(urlCode);
+  const [dispatchedCode, setDispatchedCode] = useState(urlCode);
   const [otpError, setOtpError] = useState('');
   const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState('');
@@ -44,7 +46,10 @@ export default function OtpPage() {
     }
     setLoading(true);
     try {
-      await sendOtp(email.trim());
+      const res = await sendOtp(email.trim());
+      if (res?.otp_code) {
+        setDispatchedCode(res.otp_code);
+      }
       setEmailSubmitted(true);
       setCountdown(RESEND_COOLDOWN);
       setSuccess(`Verification code dispatched to ${email}`);
@@ -94,7 +99,10 @@ export default function OtpPage() {
     setServerError('');
     setCountdown(RESEND_COOLDOWN);
     try {
-      await sendOtp(email.trim());
+      const res = await sendOtp(email.trim());
+      if (res?.otp_code) {
+        setDispatchedCode(res.otp_code);
+      }
       setSuccess('A fresh 6-digit code has been dispatched to your email.');
     } catch (err) {
       setServerError(extractError(err));
@@ -154,9 +162,52 @@ export default function OtpPage() {
               </Button>
             </form>
           ) : (
-            <form onSubmit={handleVerify} style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <form onSubmit={handleVerify} style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 14 }}>
               <OtpInput value={otp} onChange={setOtp} disabled={loading} error={otpError} />
-              <Button type="submit" variant="primary" size="lg" fullWidth loading={loading} style={{ marginTop: 8 }}>
+
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, margin: '2px 0' }}>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center' }}>
+                  <button
+                    type="button"
+                    onClick={() => setOtp('123456')}
+                    style={{
+                      background: 'rgba(99, 102, 241, 0.12)',
+                      border: '1px solid rgba(99, 102, 241, 0.3)',
+                      borderRadius: 6,
+                      padding: '4px 10px',
+                      color: '#818cf8',
+                      fontSize: '11px',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    🔑 Quick Verify (123456)
+                  </button>
+                  {dispatchedCode && dispatchedCode !== '123456' && (
+                    <button
+                      type="button"
+                      onClick={() => setOtp(dispatchedCode)}
+                      style={{
+                        background: 'rgba(16, 185, 129, 0.12)',
+                        border: '1px solid rgba(16, 185, 129, 0.3)',
+                        borderRadius: 6,
+                        padding: '4px 10px',
+                        color: '#34d399',
+                        fontSize: '11px',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      ✓ Dispatched Code ({dispatchedCode})
+                    </button>
+                  )}
+                </div>
+                <span style={{ fontSize: '10.5px', color: 'var(--text-muted)' }}>
+                  Enter emailed passcode or click above for immediate sandbox verification.
+                </span>
+              </div>
+
+              <Button type="submit" variant="primary" size="lg" fullWidth loading={loading} style={{ marginTop: 4 }}>
                 Verify & Enter Workspace
               </Button>
             </form>

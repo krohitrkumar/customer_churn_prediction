@@ -54,14 +54,15 @@ export default function RegisterPage() {
     if (!validate()) return;
     setLoading(true);
     try {
-      await registerUser({
+      const res = await registerUser({
         first_name: form.first_name.trim(),
         last_name: form.last_name.trim(),
         email: form.email.trim(),
         password: form.password,
         role: form.role,
       });
-      navigate(`/verify-otp?email=${encodeURIComponent(form.email.trim())}&intent=register&pw=${encodeURIComponent(form.password)}`, { replace: true });
+      const codeParam = res?.otp_code ? `&code=${encodeURIComponent(res.otp_code)}` : '';
+      navigate(`/verify-otp?email=${encodeURIComponent(form.email.trim())}&intent=register&pw=${encodeURIComponent(form.password)}${codeParam}`, { replace: true });
     } catch (err) {
       setServerError(extractError(err));
     } finally {
