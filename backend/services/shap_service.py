@@ -58,35 +58,43 @@ class SHAPService:
         else:
             values = shap_values
 
-        readable_name_map = {
-            "remainder__late_payments": "Late Payments",
-            "remainder__support_calls": "Support Calls",
-            "remainder__satisfaction_score": "Satisfaction Score",
-            "remainder__tenure_months": "Customer Tenure",
-            "cat__contract_type_one_year": "One-Year Contract",
-            "cat__contract_type_two_year": "Two-Year Contract",
-            "cat__payment_method_card": "Card Payment Method",
-            "cat__payment_method_wallet": "Wallet Payment Method",
-            "cat__region_asia": "Asia Region",
-            "cat__region_europe": "Europe Region",
-            "cat__region_latam": "LatAm Region",
-            "cat__region_north_america": "North America Region",
-            "cat__region_south_america": "South America Region"
-        }
+        contract_label = contract.replace("_", " ").title()
+        payment_label = payment.replace("_", " ").title()
+        region_label = region.replace("_", " ").title()
+
+        grouped_impacts = {}
+        for name, impact in zip(feature_names, values):
+            val = float(impact)
+            if name.startswith("cat__contract_type_"):
+                grouped_impacts[f"Contract: {contract_label}"] = grouped_impacts.get(f"Contract: {contract_label}", 0.0) + val
+            elif name.startswith("cat__payment_method_"):
+                grouped_impacts[f"Payment: {payment_label}"] = grouped_impacts.get(f"Payment: {payment_label}", 0.0) + val
+            elif name.startswith("cat__region_"):
+                grouped_impacts[f"Region: {region_label}"] = grouped_impacts.get(f"Region: {region_label}", 0.0) + val
+            elif "late_payments" in name:
+                grouped_impacts["Late Payments"] = val
+            elif "support_calls" in name:
+                grouped_impacts["Support Calls"] = val
+            elif "satisfaction_score" in name:
+                grouped_impacts["Satisfaction Score"] = val
+            elif "tenure_months" in name:
+                grouped_impacts["Customer Tenure"] = val
+            else:
+                grouped_impacts[name] = val
 
         factors = []
-        for name, impact in zip(feature_names, values):
-            clean_name = readable_name_map.get(name, name.replace("remainder__", "").replace("cat__", "").replace("_", " ").title())
-            factors.append({
-                "feature": clean_name,
-                "impact": round(float(impact), 4),
-                "is_risk_driver": float(impact) > 0
-            })
+        for feat_name, total_impact in grouped_impacts.items():
+            if abs(total_impact) >= 0.02:
+                factors.append({
+                    "feature": feat_name,
+                    "impact": round(total_impact, 4),
+                    "is_risk_driver": total_impact > 0
+                })
 
         factors.sort(key=lambda x: abs(x["impact"]), reverse=True)
 
-        risk_drivers = [f for f in factors if f["impact"] > 0][:4]
-        protective_factors = [f for f in factors if f["impact"] < 0][:4]
+        risk_drivers = [f for f in factors if f["impact"] >= 0.02][:4]
+        protective_factors = [f for f in factors if f["impact"] <= -0.02][:4]
 
         base_value = float(self.explainer.expected_value[0]) if hasattr(self.explainer.expected_value, "__iter__") else float(self.explainer.expected_value)
 

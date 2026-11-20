@@ -80,6 +80,13 @@ export default function AiCopilotCard({ shapData, copilotData, rlData, customerE
             <span className="copilot-badge copilot-badge-brand">Risk Attribution</span>
           </div>
           <div className="shap-bars">
+            {riskDrivers.length === 0 && (
+              <div style={{ padding: '8px 12px', background: 'rgba(16, 185, 129, 0.08)', borderRadius: 'var(--radius-md)', border: '1px solid rgba(16, 185, 129, 0.2)', marginBottom: 8 }}>
+                <span style={{ fontSize: 'var(--text-xs)', color: '#34d399', fontWeight: 500 }}>
+                  ✓ No significant churn risk drivers detected — account metrics are highly protective.
+                </span>
+              </div>
+            )}
             {riskDrivers.map((item, idx) => {
               const widthPct = Math.min(100, Math.max(20, Math.abs(item.impact) * 40));
               return (
