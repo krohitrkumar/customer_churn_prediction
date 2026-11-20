@@ -61,7 +61,10 @@ export default function RegisterPage() {
         password: form.password,
         role: form.role,
       });
-      await sendOtp(form.email.trim());
+      try {
+        await sendOtp(form.email.trim());
+      } catch (otpErr) {
+      }
       navigate(`/verify-otp?email=${encodeURIComponent(form.email.trim())}&intent=register&pw=${encodeURIComponent(form.password)}`, { replace: true });
     } catch (err) {
       setServerError(extractError(err));

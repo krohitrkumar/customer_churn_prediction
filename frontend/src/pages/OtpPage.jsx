@@ -81,13 +81,8 @@ export default function OtpPage() {
         navigate('/dashboard', { replace: true });
         return;
       }
-      if (intent === 'change-pw') {
-        setSuccess('Email verified! Redirecting...');
-        setTimeout(() => navigate(`/settings?verified=true&email=${encodeURIComponent(email)}`), 1000);
-        return;
-      }
-      setSuccess('Email verified successfully! Redirecting to login...');
-      setTimeout(() => navigate('/login'), 1200);
+      setSuccess('Email verified successfully! Redirecting to dashboard...');
+      setTimeout(() => navigate('/dashboard'), 1200);
     } catch (err) {
       setOtpError(extractError(err));
     } finally {

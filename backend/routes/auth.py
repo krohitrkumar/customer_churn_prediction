@@ -41,7 +41,7 @@ def register_user(
     return new_user
 
 @router.post("/login", response_model=Token, status_code=status.HTTP_200_OK)
-@limiter.limit("5/minute")
+@limiter.limit("30/minute")
 def login_user(
     request: Request,
     db: db_dependency,
@@ -90,7 +90,7 @@ def change_password(
     return {"message": "Password changed successfully."}
 
 @router.post("/send_otp", status_code=status.HTTP_200_OK)
-@limiter.limit("3/10minutes")
+@limiter.limit("20/minute")
 async def send_otp(
     request: Request,
     payload: SendOTPRequest,

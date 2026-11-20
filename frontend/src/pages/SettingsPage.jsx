@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { changePasswordWithOld, sendOtp, resetPasswordWithOtp } from '../api/auth';
+import { useNavigate } from 'react-router-dom';
+import { changePasswordWithOld } from '../api/auth';
 import { extractError } from '../api/client';
 import { useToastState } from '../hooks/useToast';
 import Input from '../components/ui/Input';
@@ -25,18 +25,12 @@ const STR_COLORS = ['', '#ef4444', '#f59e0b', '#3b82f6', '#10b981', '#10b981'];
 export default function SettingsPage() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const [params] = useSearchParams();
-  const verifiedEmail = params.get('email');
   const { toasts, success, error: toastError, dismiss } = useToastState();
 
-  // Change password via old password
   const [pwForm, setPwForm] = useState({ current: '', new: '', confirm: '' });
   const [pwErrors, setPwErrors] = useState({});
   const [pwLoading, setPwLoading] = useState(false);
   const strength = passwordStrength(pwForm.new);
-
-  // OTP-based password flow
-  const [otpLoading, setOtpLoading] = useState(false);
 
   function validatePw() {
     const e = {};
@@ -62,18 +56,6 @@ export default function SettingsPage() {
     }
   }
 
-  async function handleOtpPwReset() {
-    setOtpLoading(true);
-    try {
-      await sendOtp(user?.email);
-      navigate(`/verify-otp?email=${encodeURIComponent(user?.email)}&intent=change-pw`);
-    } catch (err) {
-      toastError('OTP send failed', extractError(err));
-    } finally {
-      setOtpLoading(false);
-    }
-  }
-
   function pw(key, val) {
     setPwForm((p) => ({ ...p, [key]: val }));
     if (pwErrors[key]) setPwErrors((e) => ({ ...e, [key]: '' }));
@@ -90,7 +72,6 @@ export default function SettingsPage() {
       </div>
 
       <div className="settings-layout">
-        {/* Profile Card */}
         <section className="card settings-section anim-fade-up">
           <div className="settings-section-header">
             <div className="settings-section-icon">👤</div>
@@ -124,12 +105,11 @@ export default function SettingsPage() {
           </div>
         </section>
 
-        {/* Change Password — with current password */}
         <section className="card settings-section anim-fade-up delay-1">
           <div className="settings-section-header">
             <div className="settings-section-icon">🔐</div>
             <div>
-              <h2>Method 1: Change Password (Using Current Password)</h2>
+              <h2>Change Password</h2>
               <p>Update your password by confirming your current credentials</p>
             </div>
           </div>
@@ -188,36 +168,7 @@ export default function SettingsPage() {
           </form>
         </section>
 
-        {/* Change Password via Email OTP */}
-        <section className="card settings-section anim-fade-up delay-2">
-          <div className="settings-section-header">
-            <div className="settings-section-icon">📧</div>
-            <div>
-              <h2>Method 2: Passwordless Reset via Email OTP</h2>
-              <p>Verify via Gmail one-time passcode — no old password required</p>
-            </div>
-          </div>
-          <p style={{ fontSize: 'var(--text-sm)', color: 'var(--text-secondary)', marginBottom: 16, lineHeight: 1.6 }}>
-            Forgot your current password or prefer email verification? We'll dispatch a secure 6-digit verification code to{' '}
-            <strong style={{ color: 'var(--text-primary)' }}>{user?.email}</strong>.
-          </p>
-          <Button
-            variant="secondary"
-            loading={otpLoading}
-            onClick={handleOtpPwReset}
-            leftIcon={
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <rect x="1" y="2" width="12" height="10" rx="2" stroke="currentColor" strokeWidth="1.4" />
-                <path d="M1 5l6 4 6-4" stroke="currentColor" strokeWidth="1.4" />
-              </svg>
-            }
-          >
-            Send OTP Verification to Gmail
-          </Button>
-        </section>
-
-        {/* Danger Zone */}
-        <section className="card settings-section settings-danger anim-fade-up delay-3">
+        <section className="card settings-section settings-danger anim-fade-up delay-2">
           <div className="settings-section-header">
             <div className="settings-section-icon">⚠️</div>
             <div>
