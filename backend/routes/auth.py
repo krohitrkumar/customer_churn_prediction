@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, status, Header, Depends
+from fastapi import APIRouter, HTTPException, status, Header, Depends,Request
 from typing import Optional
 from database.config import settings
 from database.connection import db_dependency
@@ -6,10 +6,11 @@ from schemas.auth import UserRegister, UserLogin, Token, UserOut, ChangePassword
 from database.security import hash_password, create_access_token, verify_password, get_current_user
 from models.user import User, UserRole, OTPVerification
 from services.email_service import email_service
+import asyncio
 import random
 from datetime import datetime, timedelta, timezone
-
-
+from middlewares.limiter import limiter
+from fastapi.security import OAuth2PasswordRequestForm
 router = APIRouter(
     prefix="/auth",
     tags=["Authentication"]
@@ -39,11 +40,13 @@ def register_user(
     db.refresh(new_user)
     return new_user
 
-from fastapi.security import OAuth2PasswordRequestForm
 
-# 2. Login User (Powers Swagger UI Authorize Dialog)
+
+# 2. Login User 
 @router.post("/login", response_model=Token, status_code=status.HTTP_200_OK)
+@limiter.limit("5/minute")
 def login_user(
+    request: Request,
     db: db_dependency,
     form_data: OAuth2PasswordRequestForm = Depends()
 ):
@@ -94,9 +97,10 @@ def change_password(
     db.commit()
     return {"message": "Password changed successfully."}
 
-# 5. Send Email OTP
 @router.post("/send_otp", status_code=status.HTTP_200_OK)
-def send_otp(
+@limiter.limit("3/10minutes")
+async def send_otp(
+    request: Request,
     payload: SendOTPRequest,
     db: db_dependency
 ):
@@ -117,7 +121,7 @@ def send_otp(
     db.add(otp_record)
     db.commit()
 
-    success = email_service.send_otp_email(payload.email, otp_code)
+    success = await asyncio.to_thread(email_service.send_otp_email, payload.email, otp_code)
     if not success:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -174,6 +178,7 @@ def reset_password_with_otp(
     otp_record = db.query(OTPVerification).filter(
         OTPVerification.email == payload.email,
         OTPVerification.otp_code == payload.otp_code,
+        OTPVerification.is_verified == True,
         OTPVerification.expires_at > now
     ).first()
     if not otp_record:
@@ -190,8 +195,7 @@ def reset_password_with_otp(
         )
 
     user.hashed_password = hash_password(payload.new_password)
-    
-    # 4. Invalidate / delete the used OTP record
+
     db.delete(otp_record)
     db.commit()
     return {"message": "Password has been successfully reset."}

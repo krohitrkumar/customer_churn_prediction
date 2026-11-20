@@ -506,7 +506,41 @@ https://retentrix.ai
             return False
 
         except Exception as e:
-            print(f"❌ Failed to send email: {e}")
+            return False
+
+    @staticmethod
+    def send_retention_email(to_email: str, subject: str, body: str, sender_name: str = None, reply_to: str = None) -> bool:
+        if not to_email or not settings.SMTP_USER or not settings.SMTP_PASSWORD:
+            return False
+
+        try:
+            msg = MIMEMultipart()
+            display_from = f"{sender_name} via {settings.SMTP_FROM_NAME}" if sender_name else settings.SMTP_FROM_NAME
+            msg["From"] = f"{display_from} <{settings.SMTP_USER}>"
+            msg["To"] = to_email
+            msg["Subject"] = subject
+            if reply_to:
+                msg["Reply-To"] = reply_to
+            msg.attach(MIMEText(body, "plain"))
+
+            try:
+                with smtplib.SMTP_SSL(settings.SMTP_HOST, 465, timeout=4) as server:
+                    server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
+                    server.sendmail(settings.SMTP_USER, to_email, msg.as_string())
+                return True
+            except Exception:
+                pass
+
+            try:
+                with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT or 587, timeout=4) as server:
+                    server.starttls()
+                    server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
+                    server.sendmail(settings.SMTP_USER, to_email, msg.as_string())
+                return True
+            except Exception:
+                return False
+
+        except Exception:
             return False
 
 email_service = EmailService()

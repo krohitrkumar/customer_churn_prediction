@@ -1,10 +1,27 @@
 import client from './client';
 
-// Run churn prediction for a single customer
 export async function predictSingle(data) {
-  // data shape: { tenure_months, support_calls, late_payments, satisfaction_score,
-  //               contract_type, payment_method, region, customer_id? }
   const res = await client.post('/predict/single', data);
+  return res.data;
+}
+
+export async function runCopilot(data) {
+  const res = await client.post('/predict/copilot', data);
+  return res.data;
+}
+
+export async function getCustomerCopilot(customerId) {
+  const res = await client.get(`/predict/copilot/${customerId}`);
+  return res.data;
+}
+
+export async function sendRetentionEmail(payload) {
+  const res = await client.post('/predict/send-email', payload);
+  return res.data;
+}
+
+export async function sendRLFeedback(payload) {
+  const res = await client.post('/predict/rl-feedback', payload);
   return res.data;
 }
 

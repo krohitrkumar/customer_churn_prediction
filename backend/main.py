@@ -16,6 +16,9 @@ from routes.predictions import router as prediction_routers
 from routes.customers import router as customers_router
 from routes.auth import router as auth_router
 from routes.analytics import router as analytics_router
+from middlewares.limiter import limiter
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 
 @asynccontextmanager
 async def lifespan(app:FastAPI):
@@ -31,6 +34,8 @@ app = FastAPI(
     docs_url="/docs",
     lifespan= lifespan
 ) 
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded,_rate_limit_exceeded_handler)
 
 app.add_middleware(
     CORSMiddleware,
@@ -45,6 +50,7 @@ app.include_router(prediction_routers, prefix=settings.API_PREFIX)
 app.include_router(customers_router, prefix=settings.API_PREFIX)
 app.include_router(auth_router, prefix=settings.API_PREFIX)
 app.include_router(analytics_router,prefix=settings.API_PREFIX)
+
 
 @app.get("/", tags=["Health"])
 def health_check():

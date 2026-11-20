@@ -274,73 +274,93 @@ async def upload_customers(
             detail=f"Missing required columns in spreadsheet: {', '.join(missing)}"
         )
     existing_codes = set(code[0] for code in db.query(Customer.customer_code).all())
-    imported_count = 0
+    valid_records = []
     skipped_count = 0
-    # Step 5: Loop through each row
+
     for _, row in df.iterrows():
-        code = str(row["customer_code"]).strip()    
+        code = str(row["customer_code"]).strip() if pd.notna(row.get("customer_code")) else ""
         if not code or code in existing_codes:
             skipped_count += 1
             continue
-        try:
-            fn = str(row["first_name"]).strip()
-            ln = str(row["last_name"]).strip()
-            email = str(row["email"]).strip() if "email" in row and pd.notna(row["email"]) else None
-            tenure = clean_int(row.get("tenure_months"), default=12, min_val=1, max_val=72)
-            satisfaction = clean_float(row.get("satisfaction_score"), default=5.0, min_val=1.0, max_val=10.0)
-            calls = clean_int(row.get("support_calls"), default=0, min_val=0, max_val=20)
-            late = clean_int(row.get("late_payments"), default=0, min_val=0, max_val=12)
-            contract = clean_contract(row.get("contract_type", "month_to_month"))
-            payment = clean_payment(row.get("payment_method", "card"))
-            region = clean_region(row.get("region", "north_america"))
-            cust_data = {
-                "customer_code": code,
-                "first_name": fn,
-                "last_name": ln,
-                "email": email,
-                "tenure_months": tenure,
-                "support_calls": calls,
-                "late_payments": late,
-                "satisfaction_score": satisfaction,
-                "contract_type": contract,
-                "payment_method": payment,
-                "region": region
-            }
 
-            churn_score = None
-            risk_level = None
-            playbooks = []
-            try:
-                res = ml_service.predict_churn(cust_data)
-                churn_score = res["churn_probability"]
-                risk_level = res["risk_level"]
-                playbooks = res.get("playbooks", [])
-            except Exception:
-                pass
-            
+        existing_codes.add(code)
+        fn = str(row["first_name"]).strip() if pd.notna(row.get("first_name")) else "Customer"
+        ln = str(row["last_name"]).strip() if pd.notna(row.get("last_name")) else ""
+        email = str(row["email"]).strip() if "email" in row and pd.notna(row["email"]) else None
+        tenure = clean_int(row.get("tenure_months"), default=12, min_val=1, max_val=72)
+        satisfaction = clean_float(row.get("satisfaction_score"), default=5.0, min_val=1.0, max_val=10.0)
+        calls = clean_int(row.get("support_calls"), default=0, min_val=0, max_val=20)
+        late = clean_int(row.get("late_payments"), default=0, min_val=0, max_val=12)
+        contract = clean_contract(row.get("contract_type", "month_to_month"))
+        payment = clean_payment(row.get("payment_method", "card"))
+        region = clean_region(row.get("region", "north_america"))
+
+        valid_records.append({
+            "customer_code": code,
+            "first_name": fn,
+            "last_name": ln,
+            "email": email,
+            "tenure_months": tenure,
+            "support_calls": calls,
+            "late_payments": late,
+            "satisfaction_score": satisfaction,
+            "contract_type": contract,
+            "payment_method": payment,
+            "region": region
+        })
+
+    imported_count = len(valid_records)
+
+    if imported_count > 0:
+        batch_df = pd.DataFrame([{
+            "tenure_months": r["tenure_months"],
+            "support_calls": r["support_calls"],
+            "late_payments": r["late_payments"],
+            "satisfaction_score": r["satisfaction_score"],
+            "region": r["region"].value,
+            "contract_type": r["contract_type"].value,
+            "payment_method": r["payment_method"].value
+        } for r in valid_records])
+
+        try:
+            _, probabilities, risk_levels = ml_service.predict_churn_batch(batch_df)
+        except Exception:
+            probabilities = [None] * imported_count
+            risk_levels = [None] * imported_count
+
+        customers_to_add = []
+        for i, record in enumerate(valid_records):
+            prob = float(probabilities[i]) if probabilities[i] is not None else None
+            risk = str(risk_levels[i]) if risk_levels[i] is not None else None
+
             customer = Customer(
-                **cust_data,
-                latest_churn_score=churn_score,
-                latest_risk_level=risk_level
+                **record,
+                latest_churn_score=prob,
+                latest_risk_level=risk
             )
-            db.add(customer)
-            db.flush()
-            
-            if churn_score is not None:
-                history = PredictionHistory(
+            customers_to_add.append(customer)
+
+        db.add_all(customers_to_add)
+        db.flush()
+
+        histories_to_add = []
+        for i, customer in enumerate(customers_to_add):
+            prob = float(probabilities[i]) if probabilities[i] is not None else None
+            risk = str(risk_levels[i]) if risk_levels[i] is not None else None
+            if prob is not None:
+                histories_to_add.append(PredictionHistory(
                     customer_id=customer.id,
                     triggered_by_user_id=current_user.id,
-                    churn_probability=churn_score,
-                    risk_level=risk_level,
-                    playbook_recommendations=[p.model_dump() for p in playbooks] if playbooks else []
-                )
-                db.add(history)
-            existing_codes.add(code)
-            imported_count += 1
-        except Exception:
-            skipped_count += 1
-   
-    db.commit()
+                    churn_probability=prob,
+                    risk_level=risk,
+                    playbook_recommendations=[]
+                ))
+
+        if histories_to_add:
+            db.add_all(histories_to_add)
+
+        db.commit()
+
     return {
         "message": f"Successfully imported {imported_count} accounts with AI churn predictions ({skipped_count} skipped).",
         "imported": imported_count,

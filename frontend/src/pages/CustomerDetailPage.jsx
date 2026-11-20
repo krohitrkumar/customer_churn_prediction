@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getCustomer, deleteCustomer, updateCustomer } from '../api/customers';
-import { useHistory } from '../hooks/usePredictions';
+import { useHistory, useCustomerCopilot } from '../hooks/usePredictions';
 import { useAuth } from '../context/AuthContext';
 import { useToastState } from '../hooks/useToast';
 import { extractError } from '../api/client';
@@ -9,6 +9,7 @@ import RiskBadge from '../components/customers/RiskBadge';
 import CustomerForm from '../components/customers/CustomerForm';
 import ChurnGauge from '../components/predictions/ChurnGauge';
 import PlaybookCard from '../components/predictions/PlaybookCard';
+import AiCopilotCard from '../components/predictions/AiCopilotCard';
 import Modal from '../components/ui/Modal';
 import Button from '../components/ui/Button';
 import Badge from '../components/ui/Badge';
@@ -35,6 +36,7 @@ export default function CustomerDetailPage() {
   const [saving, setSaving] = useState(false);
 
   const { history, loading: historyLoading, load: loadHistory } = useHistory(id);
+  const { copilot, loading: copilotLoading, load: loadCopilot } = useCustomerCopilot(id);
 
   useEffect(() => {
     async function loadData() {
@@ -43,6 +45,7 @@ export default function CustomerDetailPage() {
         const data = await getCustomer(id);
         setCustomer(data);
         loadHistory();
+        loadCopilot();
       } catch (err) {
         toastError('Not found', extractError(err));
       } finally {
@@ -214,6 +217,16 @@ export default function CustomerDetailPage() {
           )}
         </div>
       </div>
+
+      {copilot && (
+        <AiCopilotCard
+          shapData={copilot.shap_explanation}
+          copilotData={copilot.ai_copilot}
+          rlData={copilot.rl_policy}
+          customerEmail={customer.email}
+          customerName={`${customer.first_name} ${customer.last_name}`}
+        />
+      )}
 
       {/* Historical Predictions */}
       <div className="card anim-fade-up delay-2" style={{ marginTop: 24 }}>

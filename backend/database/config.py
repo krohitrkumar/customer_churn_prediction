@@ -1,6 +1,5 @@
-# backend/database/config.py
 import os
-from typing import List
+from typing import List, Union
 
 ENV_FILE_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".env"))
 
@@ -18,19 +17,42 @@ try:
 
         DATABASE_URL: str = "sqlite:///./churn_database.db"
         
-        ALLOWED_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:8501", "*"]
+        ALLOWED_ORIGINS: Union[List[str], str] = [
+            "http://localhost:3000",
+            "http://localhost:5173",
+            "http://127.0.0.1:3000",
+            "http://127.0.0.1:5173",
+            "https://customerchurnprediction-id-l.vercel.app"
+        ]
         
         MODEL_PATH: str = os.path.abspath(
             os.path.join(os.path.dirname(__file__), "..", "..", "ml_pipeline", "artifacts", "churn_model.pkl")
         )
 
-        # 🟢 Email Delivery Settings
+        GROQ_API_KEY: str = ""
+        GROQ_MODEL: str = "openai/gpt-oss-120b"
+        REDIS_URL: str = ""
+
         RESEND_API_KEY: str = ""
         SMTP_HOST: str = "smtp.gmail.com"
         SMTP_PORT: int = 587
         SMTP_USER: str = ""
         SMTP_PASSWORD: str = ""
         SMTP_FROM_NAME: str = "Customer Churn Intelligence"
+
+        @field_validator("ALLOWED_ORIGINS", mode="before")
+        @classmethod
+        def parse_cors_origins(cls, v):
+            if isinstance(v, str):
+                v = v.strip()
+                if v.startswith("[") and v.endswith("]"):
+                    import json
+                    try:
+                        return json.loads(v)
+                    except Exception:
+                        pass
+                return [origin.strip() for origin in v.split(",") if origin.strip()]
+            return v
 
         @field_validator("DATABASE_URL", mode="before")
         @classmethod
@@ -64,13 +86,26 @@ except ImportError:
             raw_db_url = raw_db_url.replace("postgres://", "postgresql://", 1)
         DATABASE_URL: str = raw_db_url
 
-        ALLOWED_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:8501", "*"]
+        _raw_origins = os.getenv("ALLOWED_ORIGINS", "")
+        if _raw_origins:
+            ALLOWED_ORIGINS: Union[List[str], str] = [o.strip() for o in _raw_origins.split(",") if o.strip()]
+        else:
+            ALLOWED_ORIGINS: Union[List[str], str] = [
+                "http://localhost:3000",
+                "http://localhost:5173",
+                "http://127.0.0.1:3000",
+                "http://127.0.0.1:5173",
+                "https://customerchurnprediction-id-l.vercel.app",
+            ]
 
         MODEL_PATH: str = os.getenv("MODEL_PATH", os.path.abspath(
             os.path.join(os.path.dirname(__file__), "..", "..", "ml_pipeline", "artifacts", "churn_model.pkl")
         ))
 
-        # 🟢 Email Delivery Settings Fallback
+        GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "")
+        GROQ_MODEL: str = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
+        REDIS_URL: str = os.getenv("REDIS_URL", "")
+
         RESEND_API_KEY: str = os.getenv("RESEND_API_KEY", "")
         SMTP_HOST: str = os.getenv("SMTP_HOST", "smtp.gmail.com")
         SMTP_PORT: int = int(os.getenv("SMTP_PORT", "587"))
@@ -78,4 +113,4 @@ except ImportError:
         SMTP_PASSWORD: str = os.getenv("SMTP_PASSWORD", "")
         SMTP_FROM_NAME: str = os.getenv("SMTP_FROM_NAME", "Customer Churn Intelligence")
 
-settings = Settings()
+settings = Settings()

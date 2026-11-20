@@ -6,6 +6,7 @@ import { useToastState } from '../hooks/useToast';
 import { extractError } from '../api/client';
 import ChurnGauge from '../components/predictions/ChurnGauge';
 import PlaybookCard from '../components/predictions/PlaybookCard';
+import AiCopilotCard from '../components/predictions/AiCopilotCard';
 import Input from '../components/ui/Input';
 import Select from '../components/ui/Select';
 import Button from '../components/ui/Button';
@@ -180,6 +181,14 @@ export default function PredictPage() {
                   </div>
                 </div>
               </div>
+
+              <AiCopilotCard
+                shapData={result.shap_explanation}
+                copilotData={result.ai_copilot}
+                rlData={result.rl_policy}
+                customerEmail={result.customer_email}
+                customerName={result.customer_name}
+              />
 
               {/* Playbooks */}
               {result.playbooks?.length > 0 && (

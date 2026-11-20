@@ -1,16 +1,16 @@
 import { useState } from 'react';
-import { predictSingle, getPredictionHistory } from '../api/predictions';
+import { runCopilot, getCustomerCopilot, getPredictionHistory } from '../api/predictions';
 
 export function usePrediction() {
-  const [result, setResult]   = useState(null);
+  const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError]     = useState(null);
+  const [error, setError] = useState(null);
 
   async function predict(data) {
     setLoading(true);
     setError(null);
     try {
-      const res = await predictSingle(data);
+      const res = await runCopilot(data);
       setResult(res);
       return res;
     } catch (err) {
@@ -21,15 +21,39 @@ export function usePrediction() {
     }
   }
 
-  function reset() { setResult(null); setError(null); }
+  function reset() {
+    setResult(null);
+    setError(null);
+  }
 
   return { result, loading, error, predict, reset };
+}
+
+export function useCustomerCopilot(customerId) {
+  const [copilot, setCopilot] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  async function load() {
+    if (!customerId) return;
+    setLoading(true);
+    try {
+      const data = await getCustomerCopilot(customerId);
+      setCopilot(data);
+    } catch (err) {
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return { copilot, loading, error, load };
 }
 
 export function useHistory(customerId) {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError]     = useState(null);
+  const [error, setError] = useState(null);
 
   async function load() {
     if (!customerId) return;
