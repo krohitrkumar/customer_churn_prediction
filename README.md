@@ -1,8 +1,6 @@
 <div align="center">
 
-<img src="assets/logo.svg" width="72" height="72" alt="Retentrix Logo" />
-
-# Retentrix
+# <img src="assets/logo.svg" width="38" height="38" alt="Retentrix Logo" style="vertical-align: middle; margin-right: 8px;" /> Retentrix
 ### AI Customer Churn Intelligence & Retention Copilot
 
 [![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
