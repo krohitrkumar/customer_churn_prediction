@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { registerUser, sendOtp, loginUser, getMe } from '../api/auth';
+import { registerUser, loginUser, getMe } from '../api/auth';
 import { extractError } from '../api/client';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
@@ -61,10 +61,6 @@ export default function RegisterPage() {
         password: form.password,
         role: form.role,
       });
-      try {
-        await sendOtp(form.email.trim());
-      } catch (otpErr) {
-      }
       navigate(`/verify-otp?email=${encodeURIComponent(form.email.trim())}&intent=register&pw=${encodeURIComponent(form.password)}`, { replace: true });
     } catch (err) {
       setServerError(extractError(err));

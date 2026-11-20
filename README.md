@@ -1,6 +1,7 @@
 <div align="center">
 
 # 🧠 Retentrix
+
 ### AI Customer Churn Intelligence & Retention Copilot
 
 [![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
@@ -19,9 +20,9 @@
 
 <br/>
 
-| 🌐 Frontend | ⚡ Backend API | 📖 Swagger Docs |
-|:-----------:|:--------------:|:---------------:|
-| [customerchurnprediction-roan.vercel.app](https://customerchurnprediction-roan.vercel.app) | [retentrix-ai.onrender.com](https://retentrix-ai.onrender.com) | [/docs](https://retentrix-ai.onrender.com/docs) |
+| 🌐 Frontend (Vercel) | ⚡ Backend API (Render) | 📖 Swagger Docs |
+|:--------------------:|:----------------------:|:---------------:|
+| [customerchurnprediction-roan.vercel.app](https://customerchurnprediction-roan.vercel.app) | [retentrix-ai.onrender.com](https://retentrix-ai.onrender.com) | [retentrix-ai.onrender.com/docs](https://retentrix-ai.onrender.com/docs) |
 
 </div>
 
@@ -30,118 +31,101 @@
 ## 📐 System Architecture
 
 ```
-╔══════════════════════════════════════════════════════════════════════════════════╗
-║                           RETENTRIX PLATFORM ARCHITECTURE                       ║
-╚══════════════════════════════════════════════════════════════════════════════════╝
+╔═══════════════════════════════════════════════════════════════╗
+║           RETENTRIX PLATFORM — SYSTEM ARCHITECTURE           ║
+╚═══════════════════════════════════════════════════════════════╝
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                              👤  END USERS                                      │
-│          CSM / Admin / Analyst  ──  Browser (React SPA on Vercel)               │
-└──────────────────────────────────────┬──────────────────────────────────────────┘
-                                       │  HTTPS
-┌──────────────────────────────────────▼──────────────────────────────────────────┐
-│                        🌐  VERCEL  (Frontend CDN / Edge)                        │
-│   customerchurnprediction-roan.vercel.app                                       │
-│                                                                                 │
-│   ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌────────────┐              │
-│   │ Dashboard  │  │ Customers  │  │ AI Predict │  │  ROI Hub   │              │
-│   │  /dash     │  │ /customers │  │  /predict  │  │  /roi-hub  │              │
-│   └────────────┘  └────────────┘  └────────────┘  └────────────┘              │
-│   ┌────────────┐  ┌────────────┐  ┌────────────┐                               │
-│   │  Settings  │  │  OTP Page  │  │  Auth      │                               │
-│   │  /settings │  │  /verify   │  │  /login    │                               │
-│   └────────────┘  └────────────┘  └────────────┘                               │
-└──────────────────────────────────────┬──────────────────────────────────────────┘
-                                       │  REST / JSON  (Axios)
-┌──────────────────────────────────────▼──────────────────────────────────────────┐
-│                     ⚡  RENDER  (Backend — Persistent Linux Container)           │
-│   retentrix-ai.onrender.com                                                     │
-│                                                                                 │
-│   ┌─────────────────────────────────────────────────────────────────────────┐   │
-│   │                       FastAPI Application (main.py)                     │   │
-│   │                                                                         │   │
-│   │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌────────────┐ │   │
-│   │  │  auth.py     │  │customers.py  │  │predictions.py│  │analytics.py│ │   │
-│   │  │  /auth/*     │  │/customers/*  │  │/predict/*    │  │/analytics/*│ │   │
-│   │  │              │  │              │  │              │  │            │ │   │
-│   │  │ • Register   │  │ • List/CRUD  │  │ • Predict    │  │• Dashboard │ │   │
-│   │  │ • Login      │  │ • CSV/Excel  │  │ • Batch      │  │• KPI stats │ │   │
-│   │  │ • OTP send   │  │   Import     │  │ • SHAP xai   │  │• Churn rate│ │   │
-│   │  │ • OTP verify │  │ • Export     │  │ • GenAI chat │  │            │ │   │
-│   │  │ • JWT tokens │  │ • Alias map  │  │ • RL action  │  │            │ │   │
-│   │  │ • RBAC       │  │              │  │              │  │            │ │   │
-│   │  └──────────────┘  └──────────────┘  └──────────────┘  └────────────┘ │   │
-│   └─────────────────────────────────────────────────────────────────────────┘   │
-│                                                                                 │
-│   ┌─────────────────────────────────────────────────────────────────────────┐   │
-│   │                            SERVICE LAYER                                │   │
-│   │                                                                         │   │
-│   │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌────────────┐ │   │
-│   │  │ ml_service   │  │ shap_service │  │genai_service │  │ rl_service │ │   │
-│   │  │              │  │              │  │              │  │            │ │   │
-│   │  │ GBM Predict  │  │ TreeExplain  │  │ Groq LLM     │  │  LinUCB   │ │   │
-│   │  │ 7 features   │  │ Force plots  │  │ qwen3-27b    │  │  5 arms   │ │   │
-│   │  │ Prob score   │  │ Top factors  │  │ Copilot chat │  │  Net ROI  │ │   │
-│   │  └──────────────┘  └──────────────┘  └──────────────┘  └────────────┘ │   │
-│   │                                                                         │   │
-│   │  ┌──────────────┐  ┌──────────────┐                                    │   │
-│   │  │email_service │  │cache_service │                                    │   │
-│   │  │              │  │              │                                    │   │
-│   │  │ SMTP/TLS OTP │  │ Redis TTL    │                                    │   │
-│   │  │ Inline HTML  │  │ OTP store    │                                    │   │
-│   │  │ RBAC guards  │  │ Rate tokens  │                                    │   │
-│   │  └──────────────┘  └──────────────┘                                    │   │
-│   └─────────────────────────────────────────────────────────────────────────┘   │
-└───────────┬─────────────────────────────────┬───────────────────────────────────┘
-            │  SQLAlchemy / asyncpg            │  redis-py / TLS
-┌───────────▼──────────────┐      ┌───────────▼──────────────────────────────────┐
-│  🐘  NEON CLOUD           │      │  🔴  UPSTASH CLOUD REDIS                     │
-│  PostgreSQL (production)  │      │                                              │
-│                           │      │  • OTP codes (TTL 5 min)                     │
-│  Project: Churn Prediction│      │  • Rate limit counters                       │
-│  Branch:  production      │      │  • Session caching                           │
-│  ID: broad-surf-80458890  │      │                                              │
-│                           │      │  TLS encrypted, globally distributed         │
-│  Tables:                  │      └──────────────────────────────────────────────┘
-│  • users                  │
-│  • customers              │      ┌──────────────────────────────────────────────┐
-│  • predictions            │      │  📧  SMTP EMAIL SERVICE (Gmail / Any SMTP)   │
-│  • audit_logs             │      │                                              │
-└───────────────────────────┘      │  • Registration OTP  (HTML inline styled)    │
-                                   │  • Password reset OTP                        │
-                                   │  • Retention alerts  (ADMIN / CSM only)      │
-                                   │  • Rate limited: 20 OTP / min               │
-                                   └──────────────────────────────────────────────┘
+                        👤 END USERS
+              CSM  ·  Admin  ·  Analyst  ·  Viewer
+                            │
+                       Browser (HTTPS)
+                            │
+            ┌───────────────▼───────────────┐
+            │   🌐 VERCEL  (Edge CDN)       │
+            │  customerchurnprediction-     │
+            │  roan.vercel.app              │
+            │                               │
+            │  /dashboard   /customers      │
+            │  /predict     /roi-hub        │
+            │  /settings    /verify-otp     │
+            │  /login       /register       │
+            └───────────────┬───────────────┘
+                            │  REST / JSON (Axios)
+            ┌───────────────▼───────────────┐
+            │  ⚡ RENDER (Linux Container)  │
+            │  retentrix-ai.onrender.com    │
+            │                               │
+            │  ┌─────────────────────────┐  │
+            │  │    FastAPI  (main.py)   │  │
+            │  │                         │  │
+            │  │  /auth/*   Auth + OTP   │  │
+            │  │  /customers/* CRUD +    │  │
+            │  │             Import      │  │
+            │  │  /predict/* ML + SHAP   │  │
+            │  │             GenAI + RL  │  │
+            │  │  /analytics/* KPI dash  │  │
+            │  └─────────────────────────┘  │
+            │                               │
+            │  ┌─────────────────────────┐  │
+            │  │    SERVICE  LAYER       │  │
+            │  │                         │  │
+            │  │  ml_service   → GBM     │  │
+            │  │  shap_service → XAI     │  │
+            │  │  genai_service→ LLM     │  │
+            │  │  rl_service   → LinUCB  │  │
+            │  │  email_service→ SMTP    │  │
+            │  │  cache_service→ Redis   │  │
+            │  └─────────────────────────┘  │
+            └───────┬───────────────┬───────┘
+                    │               │
+        ┌───────────▼──┐    ┌───────▼────────┐
+        │ 🐘 NEON DB   │    │ 🔴 UPSTASH     │
+        │ PostgreSQL   │    │ Redis (TLS)    │
+        │              │    │                │
+        │ users        │    │ OTP codes      │
+        │ customers    │    │ TTL 10 min     │
+        │ predictions  │    │ Rate counters  │
+        │ otp_verif.   │    └────────────────┘
+        └──────────────┘
+                            ┌────────────────┐
+                            │ 📧 SMTP EMAIL  │
+                            │ Gmail TLS/SSL  │
+                            │                │
+                            │ OTP delivery   │
+                            │ Retention mail │
+                            │ ADMIN+CSM only │
+                            └────────────────┘
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                        🤖  ML PIPELINE  (Offline Training)                      │
-│   ml_pipeline/                                                                  │
-│                                                                                 │
-│   customer churn dataset.csv                                                    │
-│          │                                                                      │
-│          ▼                                                                      │
-│   customer_churn.ipynb  ──► Feature Engineering ──► GradientBoostingClassifier │
-│                                                      (200 trees, depth 5)       │
-│                                                             │                   │
-│                                                             ▼                   │
-│                                                    artifacts/churn_model.pkl    │
-│                                                    (loaded by ml_service.py)    │
-└─────────────────────────────────────────────────────────────────────────────────┘
+        ┌──────────────────────────────────────┐
+        │  🤖 ML PIPELINE  (Offline Training)  │
+        │                                      │
+        │  data/customer_churn_dataset.csv     │
+        │          │                           │
+        │          ▼                           │
+        │  notebooks/customer_churn.ipynb      │
+        │  Feature Engineering + EDA           │
+        │          │                           │
+        │          ▼                           │
+        │  GradientBoostingClassifier          │
+        │  200 trees · depth 5 · lr 0.05       │
+        │          │                           │
+        │          ▼                           │
+        │  artifacts/churn_model.pkl  ◄──────── loaded by ml_service.py
+        └──────────────────────────────────────┘
 
-                    ┌────────────────────────────────────┐
-                    │   🔄  REINFORCEMENT LEARNING ARMS   │
-                    │                                     │
-                    │  ARM 0 ──► Personalized Discount    │
-                    │  ARM 1 ──► Premium Upgrade Offer    │
-                    │  ARM 2 ──► Dedicated CSM Outreach   │
-                    │  ARM 3 ──► Loyalty Rewards Program  │
-                    │  ARM 4 ──► No Action (baseline)     │
-                    │                                     │
-                    │  Algorithm : LinUCB (contextual)    │
-                    │  Reward    : Net ROI per customer   │
-                    │  Formula   : LTV × P(retain|arm)   │
-                    │             − Intervention Cost     │
-                    └────────────────────────────────────┘
+        ┌──────────────────────────────────────┐
+        │  🎯 REINFORCEMENT LEARNING ARMS      │
+        │  Algorithm: LinUCB Contextual Bandit │
+        │                                      │
+        │  ARM 0 → Personalized Discount       │
+        │  ARM 1 → Premium Upgrade Offer       │
+        │  ARM 2 → Dedicated CSM Outreach      │
+        │  ARM 3 → Loyalty Rewards Program     │
+        │  ARM 4 → No Action (baseline)        │
+        │                                      │
+        │  Net ROI = LTV × P(retain|arm)       │
+        │            − Intervention Cost       │
+        └──────────────────────────────────────┘
 ```
 
 ---
@@ -150,61 +134,86 @@
 
 ### 1. 🔮 Explainable AI — SHAP TreeExplainer
 
-Every prediction comes with a **SHAP force plot** decomposition. The model doesn't just say "this customer will churn" — it explains *why*, ranking the top contributing behavioral signals so your CSM team can act on evidence, not guesswork.
+Every prediction includes a SHAP force-plot decomposition. The model ranks each feature's contribution so your CSM team acts on evidence, not guesswork.
 
 - **Algorithm:** `shap.TreeExplainer` on GradientBoostingClassifier
-- **Output:** Per-customer top-5 feature contributions with direction (↑ churn / ↓ churn)
+- **Output:** Per-customer top-N feature contributions with direction (↑ churn risk / ↓ churn risk)
 - **API:** `POST /predict/single` → returns `shap_values`, `top_factors[]`
 
 ### 2. 💬 GenAI Retention Copilot
 
-A conversational AI agent embedded in every customer detail page. It reads the customer's full profile, churn probability, SHAP factors, and contract data — then generates bespoke retention strategies in natural language.
+A conversational AI embedded in every customer detail page. It reads the full profile, churn probability, SHAP factors, and contract data — then generates bespoke retention strategies in natural language.
 
-- **Model:** `qwen/qwen3-27b` via Groq inference API
-- **Context injected:** tenure, MRR, satisfaction score, churn probability, top SHAP factors
-- **API:** `POST /predict/genai-advice` → streaming retention recommendation
+- **Model:** `qwen/qwen3-27b` via Groq inference
+- **Context injected:** tenure, satisfaction, support calls, late payments, churn probability, top SHAP factors
+- **API:** `POST /predict/genai-advice`
 
 ### 3. 🎯 Reinforcement Learning — LinUCB Bandit
 
-Automatically selects the optimal retention intervention arm per customer using **contextual multi-armed bandit** (LinUCB). The algorithm balances exploration vs exploitation, updating arm rewards from actual retention outcomes.
+Automatically selects the optimal retention intervention using **contextual multi-armed bandit (LinUCB)**. Balances exploration vs exploitation, updating arm rewards from real retention outcomes.
 
 | Arm | Intervention | Typical Use Case |
-|-----|-------------|-----------------|
+|:---:|-------------|-----------------|
 | 0 | Personalized Discount | Price-sensitive churners |
 | 1 | Premium Upgrade Offer | Feature-gap churners |
 | 2 | Dedicated CSM Outreach | Relationship-at-risk |
 | 3 | Loyalty Rewards Program | Long-tenure dissatisfied |
-| 4 | No Action (baseline) | Low-churn-risk customers |
-
-**Net ROI Formula:**
-```
-Net ROI = LTV × P(retain | arm) − Intervention Cost
-```
+| 4 | No Action | Low-churn-risk customers |
 
 ### 4. 📂 Resilient CSV / Excel Ingestion
 
-The bulk import engine is **schema-tolerant by design** — it handles real-world dirty data from any SaaS export (Salesforce, HubSpot, Mixpanel, etc.):
+The bulk import engine handles real-world dirty data exports from any CRM:
 
-- **Alias mapping:** `tenure_months` = `Tenure Months` = `tenure months` = `tenuremonths` — all resolved
-- **Case normalization:** `Month-to-Month` = `month-to-month` = `MONTH TO MONTH`
-- **Extra columns ignored:** Upload a 50-column CRM dump; only the 7 ML features are used
-- **Email column optional:** If absent, email-based features are simply skipped
-- **Excel + CSV:** Both `.xlsx` and `.csv` accepted
+- **Alias mapping** — `tenure_months` = `Tenure Months` = `tenure months` — all resolved
+- **Case-insensitive** — `Month-to-Month` = `month_to_month` = `MONTH TO MONTH`
+- **Extra columns ignored** — Upload a 50-column dump; only the 7 ML features are extracted
+- **Email optional** — If absent, email features are skipped gracefully
+- **Formats** — `.xlsx` and `.csv` both supported
 - **API:** `POST /customers/import`
 
 ### 5. 📊 Executive ROI Hub (`/roi-hub`)
-
-A CFO-ready dashboard surfacing the financial reality of your churn risk:
 
 | Widget | Insight |
 |--------|---------|
 | **LTV at Risk** | Total MRR × avg tenure of at-risk cohort |
 | **ARR at Risk** | Annualized revenue exposed by churn probability |
 | **Recoverable Revenue** | Revenue saveable with successful retention |
-| **What-If Simulator** | Model retention rate vs revenue saved |
+| **What-If Simulator** | Model retention rate vs revenue saved interactively |
 | **Heavy Lifters** | High-LTV customers worth maximum investment |
-| **High-Drain** | Customers where retention cost > LTV (let go) |
+| **High-Drain** | Customers where retention cost > LTV |
 | **Methodology Card** | Full formula transparency for finance teams |
+
+---
+
+## 🔐 Authentication Flow
+
+```
+  REGISTER
+  ────────
+  Fill form → POST /auth/register
+           → Account created (inactive)
+           → OTP sent to email automatically
+           → Enter OTP at /verify-otp
+           → Account activated → JWT issued → Dashboard
+
+  LOGIN
+  ─────
+  POST /auth/login → credentials verified → JWT (access token)
+
+  OTP / FORGOT PASSWORD
+  ──────────────────────
+  POST /auth/send_otp → OTP dispatched → POST /auth/verify_otp
+  → POST /auth/reset_password (new password, no old password needed)
+
+  SECURITY LAYERS
+  ───────────────
+  • JWT HS256 tokens with configurable expiry
+  • bcrypt password hashing (cost factor 12)
+  • OTP stored in PostgreSQL with 10-minute TTL
+  • Rate limiting: 30 logins/min, 20 OTPs/min per IP (SlowAPI)
+  • RBAC roles: ADMIN · CSM · ANALYST (Viewer)
+  • Retention email actions restricted to ADMIN + CSM only
+```
 
 ---
 
@@ -218,18 +227,18 @@ A CFO-ready dashboard surfacing the financial reality of your churn risk:
 | **UI Primitives** | Radix UI | Accessible dialogs, selects |
 | **Auth State** | Context API + jwt-decode | JWT session management |
 | **Backend** | FastAPI 0.115 | Async REST API, OpenAPI docs |
-| **ORM** | SQLAlchemy 2 (async) | Database operations |
-| **Validation** | Pydantic v2 | Request/response schemas |
+| **ORM** | SQLAlchemy 2 | Database operations |
+| **Validation** | Pydantic v2 | Request / response schemas |
 | **Auth** | python-jose + bcrypt | JWT signing, password hashing |
 | **ML Model** | scikit-learn GBM | Churn probability prediction |
 | **Explainability** | SHAP TreeExplainer | Feature attribution |
-| **GenAI** | Groq API (qwen3-27b) | Retention strategy generation |
+| **GenAI** | Groq API (qwen3-27b) | Retention strategy copilot |
 | **RL Bandit** | NumPy LinUCB | Intervention optimization |
-| **Cache / OTP** | Redis (Upstash) | TTL-based OTP storage |
+| **Cache / OTP** | Redis (Upstash TLS) | OTP + rate limit storage |
 | **Rate Limiting** | SlowAPI | Endpoint abuse prevention |
-| **Email** | smtplib + SMTP TLS | OTP delivery, alerts |
-| **Database** | PostgreSQL (Neon) | Persistent storage |
-| **Frontend Host** | Vercel (Edge CDN) | Global frontend delivery |
+| **Email** | smtplib SMTP/TLS | OTP delivery, retention alerts |
+| **Database** | PostgreSQL (Neon Cloud) | Persistent storage |
+| **Frontend Host** | Vercel Edge CDN | Global frontend delivery |
 | **Backend Host** | Render (Linux container) | Persistent SMTP-capable server |
 | **ML Training** | Jupyter + scikit-learn | Offline model development |
 
@@ -240,50 +249,46 @@ A CFO-ready dashboard surfacing the financial reality of your churn risk:
 **Algorithm:** `GradientBoostingClassifier` (scikit-learn)
 
 | Hyperparameter | Value |
-|---------------|-------|
+|:--------------|:-----:|
 | `n_estimators` | 200 |
 | `max_depth` | 5 |
 | `learning_rate` | 0.05 |
 | `subsample` | 0.8 |
 
-**Input Features (7):**
+**Input Features (7 — derived from customer profile):**
 
-| # | Feature | Type | Description |
-|---|---------|------|-------------|
-| 1 | `tenure_months` | Integer | Months as a customer |
-| 2 | `monthly_charges` | Float | Current monthly spend (\$) |
-| 3 | `num_products` | Integer | Number of products subscribed |
-| 4 | `satisfaction_score` | Float | CSAT score (1–5) |
-| 5 | `support_tickets` | Integer | Open / recent support tickets |
-| 6 | `contract_type` | Categorical | Month-to-Month / One Year / Two Year |
-| 7 | `payment_method` | Categorical | Electronic / Mailed Check / Bank Transfer / Credit Card |
+| # | Feature | Type | Valid Values |
+|:-:|---------|------|-------------|
+| 1 | `tenure_months` | Integer | 0 – 100 |
+| 2 | `support_calls` | Integer | 0 – 50 (ticket count) |
+| 3 | `late_payments` | Integer | 0 – 30 |
+| 4 | `satisfaction_score` | Float | 0.0 – 10.0 |
+| 5 | `contract_type` | Categorical | `month_to_month` · `one_year` · `two_year` |
+| 6 | `payment_method` | Categorical | `card` · `wallet` · `bank` |
+| 7 | `region` | Categorical | `north_america` · `europe` · `asia` · `latam` · `africa` · `south_america` |
 
-**Output:** Churn probability ∈ [0.0, 1.0] + binary label + SHAP values
+**Output:** Churn probability ∈ [0.0, 1.0] + risk label (`Low` / `Moderate` / `Critical`) + SHAP values
+
+**Risk Thresholds:**
+
+| Label | Probability Range |
+|-------|:-----------------:|
+| 🟢 Low | < 40% |
+| 🟡 Moderate | 40% – 75% |
+| 🔴 Critical | > 75% |
 
 ---
 
-## 🔐 Authentication & Security
+## 📊 ROI Hub — Economic Formulas
 
-```
-Registration Flow:
-  User fills form → POST /auth/register → OTP sent to email
-       → POST /auth/verify-otp → Account activated → JWT issued
-
-Login Flow:
-  POST /auth/login → credentials verified → JWT (access + refresh tokens)
-
-Password Reset:
-  POST /auth/send-otp → OTP to email → POST /auth/verify-otp
-       → POST /auth/change-password (with current password)
-
-Security Layers:
-  • JWT (HS256) with configurable expiry
-  • bcrypt password hashing (cost factor 12)
-  • Redis OTP store with 5-minute TTL
-  • Rate limiting: 30 logins/min, 20 OTPs/min per IP
-  • RBAC: roles = [ADMIN, CSM, ANALYST]
-  • Email actions (send alerts) restricted to ADMIN + CSM
-```
+| Metric | Formula |
+|--------|---------|
+| **Customer LTV** | `Monthly Charges × Tenure Months` |
+| **ARR at Risk** | `Monthly Charges × 12 × Churn Probability` |
+| **Recoverable Revenue** | `ARR at Risk × Target Retention Rate` |
+| **LinUCB Net ROI** | `LTV × P(retain \| arm) − Intervention Cost` |
+| **Heavy Lifter** | `LTV > 75th percentile AND Churn Probability > 50%` |
+| **High-Drain** | `Intervention Cost > Expected LTV Recovery` |
 
 ---
 
@@ -292,74 +297,72 @@ Security Layers:
 ```
 customer_churn_prediction/
 │
-├── backend/                        # FastAPI application
-│   ├── main.py                     # App init, CORS, router registration
+├── backend/                          FastAPI application
+│   ├── main.py                       App init, CORS, router registration
 │   ├── database/
-│   │   └── connection.py           # Async SQLAlchemy engine + session
+│   │   ├── connection.py             SQLAlchemy engine + session
+│   │   └── config.py                 Pydantic settings (reads .env)
 │   ├── middlewares/
-│   │   └── auth_middleware.py      # JWT decode, current_user injection
-│   ├── models/                     # SQLAlchemy ORM models
-│   │   ├── user.py
-│   │   ├── customer.py
-│   │   └── prediction.py
-│   ├── schemas/                    # Pydantic v2 request/response schemas
-│   │   ├── auth.py
-│   │   ├── customer.py
-│   │   └── prediction.py
-│   ├── routes/                     # API route handlers
-│   │   ├── auth.py                 # /auth/* — register, login, OTP, JWT
-│   │   ├── customers.py            # /customers/* — CRUD, import, export
-│   │   ├── predictions.py          # /predict/* — single, batch, GenAI, RL
-│   │   └── analytics.py            # /analytics/* — dashboard KPIs
-│   ├── services/                   # Business logic layer
-│   │   ├── ml_services.py          # GBM model inference
-│   │   ├── shap_service.py         # SHAP TreeExplainer, force plots
-│   │   ├── genai_service.py        # Groq LLM retention copilot
-│   │   ├── rl_service.py           # LinUCB 5-arm bandit
-│   │   ├── email_service.py        # SMTP OTP + retention alerts
-│   │   └── cache_service.py        # Redis TTL operations
-│   ├── .env.example                # Environment variable template
-│   └── .env                        # (gitignored) live secrets
+│   │   ├── auth_middleware.py        JWT decode, current_user injection
+│   │   └── limiter.py                SlowAPI rate-limit instance
+│   ├── models/
+│   │   ├── user.py                   User + OTPVerification ORM models
+│   │   ├── customer.py               Customer ORM model + enums
+│   │   └── prediction.py             PredictionHistory ORM model
+│   ├── schemas/
+│   │   ├── auth.py                   Auth request/response schemas
+│   │   ├── customer.py               Customer request/response schemas
+│   │   └── prediction.py             Prediction schemas + PlaybookRec
+│   ├── routes/
+│   │   ├── auth.py                   /auth/* register, login, OTP, JWT
+│   │   ├── customers.py              /customers/* CRUD, import, export
+│   │   ├── predictions.py            /predict/* single, batch, GenAI, RL
+│   │   └── analytics.py              /analytics/* dashboard KPIs
+│   ├── services/
+│   │   ├── ml_services.py            GBM inference + playbook engine
+│   │   ├── shap_service.py           SHAP TreeExplainer, force plots
+│   │   ├── genai_service.py          Groq LLM retention copilot
+│   │   ├── rl_service.py             LinUCB 5-arm bandit
+│   │   ├── email_service.py          SMTP OTP + retention alerts
+│   │   └── cache_service.py          Redis TTL operations
+│   ├── .env.example                  Environment variable template
+│   └── .env                          (gitignored) live secrets
 │
-├── frontend/                       # React + Vite SPA
-│   ├── src/
-│   │   ├── api/                    # Axios instance + endpoint helpers
-│   │   ├── components/             # Reusable UI components
-│   │   ├── context/                # Auth context (JWT state)
-│   │   ├── hooks/                  # Custom React hooks
-│   │   ├── pages/
-│   │   │   ├── DashboardPage.jsx   # KPI overview, churn rate chart
-│   │   │   ├── CustomersPage.jsx   # Customer table, import/export
-│   │   │   ├── CustomerDetailPage.jsx  # Profile + GenAI copilot
-│   │   │   ├── PredictPage.jsx     # Single & batch AI prediction
-│   │   │   ├── RoiHubPage.jsx      # Financial ROI dashboard
-│   │   │   ├── SettingsPage.jsx    # Profile, change password
-│   │   │   ├── LoginPage.jsx       # Login form
-│   │   │   ├── RegisterPage.jsx    # Registration + OTP trigger
-│   │   │   └── OtpPage.jsx         # OTP verification
-│   │   ├── styles/                 # Global CSS tokens
-│   │   ├── App.jsx                 # Route definitions
-│   │   └── main.jsx                # Vite entry point
-│   ├── .env                        # VITE_API_BASE_URL=https://retentrix-ai.onrender.com
-│   └── .env.example
+├── frontend/                         React + Vite SPA
+│   └── src/
+│       ├── api/                      Axios instance + endpoint helpers
+│       ├── components/               Reusable UI components
+│       ├── context/                  Auth context (JWT state)
+│       ├── hooks/                    Custom React hooks
+│       ├── pages/
+│       │   ├── DashboardPage.jsx     KPI overview, churn metrics
+│       │   ├── CustomersPage.jsx     Customer table, import/export
+│       │   ├── CustomerDetailPage.jsx Profile + GenAI copilot
+│       │   ├── PredictPage.jsx       Single and batch AI prediction
+│       │   ├── RoiHubPage.jsx        Financial ROI dashboard
+│       │   ├── SettingsPage.jsx      Profile, change password
+│       │   ├── LoginPage.jsx         Login form
+│       │   ├── RegisterPage.jsx      Registration + OTP trigger
+│       │   └── OtpPage.jsx           OTP verification
+│       ├── styles/                   Global CSS tokens
+│       ├── App.jsx                   Route definitions
+│       └── main.jsx                  Vite entry point
 │
-├── ml_pipeline/                    # Offline ML training
+├── ml_pipeline/                      Offline ML training
 │   ├── data/
-│   │   ├── customer churn dataset.csv   # Raw training data
-│   │   └── processed.csv               # Feature-engineered data
+│   │   ├── customer churn dataset.csv   Raw training data
+│   │   └── processed.csv               Feature-engineered dataset
 │   ├── notebooks/
-│   │   ├── customer_churn.ipynb    # EDA + model training notebook
-│   │   └── requirements.txt        # Notebook-specific deps
+│   │   └── customer_churn.ipynb     EDA + model training notebook
 │   ├── artifacts/
-│   │   └── churn_model.pkl         # Trained GBM model (joblib)
-│   ├── train.py                    # CLI training script
+│   │   └── churn_model.pkl          Trained GBM model (joblib)
+│   ├── train.py                     CLI training script
 │   └── requirements.txt
 │
-├── demo_customers_sample.csv       # Sample upload file for demos
-├── demo_customers_sample.xlsx      # Sample upload file (Excel)
-├── requirements.txt                # Backend production deps
-├── Procfile                        # Render start command
-├── main.py                         # Root entry (imports backend)
+├── demo_customers_sample.csv         Sample upload file (CSV)
+├── demo_customers_sample.xlsx        Sample upload file (Excel)
+├── requirements.txt                  Backend production dependencies
+├── Procfile                          Render start command
 └── README.md
 ```
 
@@ -371,24 +374,24 @@ customer_churn_prediction/
 
 - Python 3.11+
 - Node.js 18+
-- A PostgreSQL database (Neon free tier works)
-- A Redis instance (Upstash free tier works)
-- A Gmail account with App Password enabled (for SMTP)
-- A Groq API key (free at [console.groq.com](https://console.groq.com))
+- PostgreSQL database — [Neon free tier](https://neon.tech)
+- Redis instance — [Upstash free tier](https://upstash.com)
+- Gmail account with **App Password** enabled
+- Groq API key — [console.groq.com](https://console.groq.com) (free)
 
-### 1. Clone the Repository
+### 1 — Clone
 
 ```bash
 git clone https://github.com/krohitrkumar/customer_churn_prediction.git
 cd customer_churn_prediction
 ```
 
-### 2. Backend Setup
+### 2 — Backend
 
 ```bash
 python -m venv venv
-.\venv\Scripts\activate          # Windows
-# source venv/bin/activate       # macOS / Linux
+.\venv\Scripts\activate        # Windows
+# source venv/bin/activate     # macOS / Linux
 
 pip install -r requirements.txt
 ```
@@ -396,21 +399,20 @@ pip install -r requirements.txt
 Create `backend/.env`:
 
 ```env
-DATABASE_URL=postgresql+asyncpg://user:password@host/dbname
+DATABASE_URL=postgresql+asyncpg://user:pass@host/dbname
 REDIS_URL=rediss://default:token@host:port
-SECRET_KEY=your-jwt-secret-key-min-32-chars
+
+SECRET_KEY=your-random-64-char-hex-string
 ALGORITHM=HS256
-ACCESS_TOKEN_EXPIRE_MINUTES=60
-REFRESH_TOKEN_EXPIRE_DAYS=7
+ACCESS_TOKEN_EXPIRE_MINUTES=1440
 
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
-SMTP_USER=your-email@gmail.com
+SMTP_USER=your@gmail.com
 SMTP_PASSWORD=your-gmail-app-password
-FROM_EMAIL=your-email@gmail.com
-FROM_NAME=Retentrix AI
+SMTP_FROM_NAME=Retentrix AI
 
-GROQ_API_KEY=gsk_your_groq_key_here
+GROQ_API_KEY=gsk_your_key_here
 ```
 
 ```bash
@@ -418,9 +420,9 @@ cd backend
 uvicorn main:app --reload --port 8000
 ```
 
-API live at: `http://localhost:8000` | Swagger: `http://localhost:8000/docs`
+API: `http://localhost:8000` | Swagger: `http://localhost:8000/docs`
 
-### 3. ML Model (if retraining)
+### 3 — ML Model (retrain if needed)
 
 ```bash
 cd ml_pipeline
@@ -428,9 +430,9 @@ pip install -r requirements.txt
 python train.py
 ```
 
-The trained model saves to `ml_pipeline/artifacts/churn_model.pkl`.
+Saves trained model to `ml_pipeline/artifacts/churn_model.pkl`.
 
-### 4. Frontend Setup
+### 4 — Frontend
 
 ```bash
 cd frontend
@@ -447,7 +449,7 @@ VITE_API_BASE_URL=http://localhost:8000
 npm run dev
 ```
 
-Frontend live at: `http://localhost:5173`
+Frontend: `http://localhost:5173`
 
 ---
 
@@ -460,25 +462,22 @@ Frontend live at: `http://localhost:5173`
 | **Environment** | Python 3 |
 | **Build Command** | `pip install -r requirements.txt` |
 | **Start Command** | `uvicorn backend.main:app --host 0.0.0.0 --port $PORT` |
-| **Instance Type** | Free (or Starter for no sleep) |
 
-**Environment Variables** (add all from `.env` above in Render dashboard):
+**Environment Variables** (add in Render dashboard):
 
-```
-DATABASE_URL          postgresql+asyncpg://...
-REDIS_URL             rediss://...
-SECRET_KEY            <random 64-char string>
-ALGORITHM             HS256
-ACCESS_TOKEN_EXPIRE_MINUTES   60
-REFRESH_TOKEN_EXPIRE_DAYS     7
-SMTP_HOST             smtp.gmail.com
-SMTP_PORT             587
-SMTP_USER             your@gmail.com
-SMTP_PASSWORD         your-app-password
-FROM_EMAIL            your@gmail.com
-FROM_NAME             Retentrix AI
-GROQ_API_KEY          gsk_...
-```
+| Variable | Value |
+|----------|-------|
+| `DATABASE_URL` | `postgresql+asyncpg://...` (Neon connection string) |
+| `REDIS_URL` | `rediss://...` (Upstash connection string) |
+| `SECRET_KEY` | 64-char random hex string |
+| `ALGORITHM` | `HS256` |
+| `ACCESS_TOKEN_EXPIRE_MINUTES` | `1440` |
+| `SMTP_HOST` | `smtp.gmail.com` |
+| `SMTP_PORT` | `587` |
+| `SMTP_USER` | `your@gmail.com` |
+| `SMTP_PASSWORD` | Gmail App Password |
+| `SMTP_FROM_NAME` | `Retentrix AI` |
+| `GROQ_API_KEY` | `gsk_...` |
 
 ### Frontend (Vercel)
 
@@ -488,79 +487,43 @@ GROQ_API_KEY          gsk_...
 | **Root Directory** | `frontend` |
 | **Build Command** | `npm run build` |
 | **Output Directory** | `dist` |
-| **Environment Variable** | `VITE_API_BASE_URL=https://retentrix-ai.onrender.com` |
-
----
-
-## 📊 ROI Hub — Economic Formulas
-
-The ROI Hub uses the following financial models:
-
-| Metric | Formula |
-|--------|---------|
-| **Customer LTV** | `Monthly Charges × Tenure Months` |
-| **ARR at Risk** | `Monthly Charges × 12 × Churn Probability` |
-| **Recoverable Revenue** | `ARR at Risk × Target Retention Rate` |
-| **LinUCB Net ROI** | `LTV × P(retain \| arm) − Intervention Cost` |
-| **Heavy Lifter Score** | `LTV > P75 AND Churn Probability > 0.5` |
-| **High-Drain Score** | `Intervention Cost > Expected LTV Recovery` |
-
----
-
-## 🔄 Data Flow
-
-```
-CSV / Excel Upload
-       │
-       ▼
-  Alias Resolver ──► Normalize column names (case, spaces, synonyms)
-       │
-       ▼
-  Schema Validator ──► Check required 7 features, fill defaults
-       │
-       ▼
-  Bulk Insert ──► PostgreSQL customers table
-       │
-       ▼
-  GBM Inference ──► churn_probability ∈ [0, 1]
-       │
-       ├──► SHAP TreeExplainer ──► top_factors[] (why this score?)
-       │
-       ├──► LinUCB Bandit ──► recommended_arm (which intervention?)
-       │
-       └──► Groq LLM ──► retention_strategy (what to say/do?)
-                │
-                ▼
-         Dashboard KPIs ──► ROI Hub ──► Executive Report
-```
+| **Env Variable** | `VITE_API_BASE_URL=https://retentrix-ai.onrender.com` |
 
 ---
 
 ## 🎓 Academic Context
 
-This project was developed as a **final-year capstone project** at **ADGIT Delhi (AI/DS program)**. It demonstrates end-to-end applied AI:
+This platform was developed as a **final-year capstone project** at:
 
-- Supervised learning (churn classification)
-- Explainable AI (SHAP)
-- Reinforcement learning (LinUCB bandit)
-- Generative AI (LLM-powered copilot)
-- Production deployment (Render + Vercel + Neon + Upstash)
-- Enterprise SaaS UX (RBAC, OTP auth, ROI dashboards)
+**Dr. Akhilesh Das Gupta Institute of Professional Studies (ADGIPS)**
+*Affiliated to Guru Gobind Singh Indraprastha University (GGSIPU)*
+B.Tech — Artificial Intelligence & Data Science
+
+The project demonstrates full end-to-end applied AI:
+
+| Domain | Implementation |
+|--------|---------------|
+| Supervised Learning | Gradient Boosting churn classifier |
+| Explainable AI | SHAP TreeExplainer force plots |
+| Reinforcement Learning | LinUCB contextual multi-armed bandit |
+| Generative AI | LLM-powered retention strategy copilot |
+| Production Deployment | Render + Vercel + Neon + Upstash |
+| Enterprise UX | RBAC, OTP auth, ROI dashboards |
 
 ---
 
 ## 👨‍💻 Author
 
 **Rohit Kumar**
-- 🐙 GitHub: [@k_rohit_r_kumar](https://github.com/k_rohit_r_kumar)
+- 🐙 GitHub: [@krohitrkumar](https://github.com/krohitrkumar)
 - 📧 Email: rohitkumar.adgitm.aids@gmail.com
-- 🏫 ADGIT Delhi — B.Tech AI & Data Science
+- 🏫 ADGIPS, GGSIPU — B.Tech AI & Data Science
 
 ---
 
 ## 📄 License
 
-This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+This project is licensed under the **MIT License**.
 
 ---
 

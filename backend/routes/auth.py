@@ -18,26 +18,57 @@ router = APIRouter(
 )
 
 @router.post("/register", response_model=UserOut, status_code=status.HTTP_201_CREATED)
-def register_user(
+async def register_user(
     payload: UserRegister,
     db: db_dependency
 ):
     existing_user = db.query(User).filter(User.email == payload.email).first()
     if existing_user:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"User with email '{payload.email}' already exists."
-        )
+        if not existing_user.is_active:
+            db.delete(existing_user)
+            db.query(OTPVerification).filter(
+                OTPVerification.email == payload.email,
+                OTPVerification.is_verified == False
+            ).delete()
+            db.commit()
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"User with email '{payload.email}' already exists."
+            )
+
     new_user = User(
         email=payload.email,
         hashed_password=hash_password(payload.password),
         first_name=payload.first_name,
         last_name=payload.last_name,
-        role=payload.role
+        role=payload.role,
+        is_active=False
     )
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
+
+    otp_code = f"{random.randint(100000, 999999)}"
+    expires_at = datetime.now(timezone.utc) + timedelta(minutes=10)
+    otp_record = OTPVerification(
+        email=payload.email,
+        otp_code=otp_code,
+        expires_at=expires_at,
+        is_verified=False
+    )
+    db.add(otp_record)
+    db.commit()
+
+    success = await asyncio.to_thread(email_service.send_otp_email, payload.email, otp_code)
+    if not success:
+        db.delete(new_user)
+        db.commit()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Account created but email delivery failed. Please check your email address and try again."
+        )
+
     return new_user
 
 @router.post("/login", response_model=Token, status_code=status.HTTP_200_OK)
@@ -142,9 +173,13 @@ def verify_otp(
         )
 
     otp_record.is_verified = True
-    db.commit()
 
     user = db.query(User).filter(User.email == payload.email).first()
+    if user and not user.is_active:
+        user.is_active = True
+
+    db.commit()
+
     if user:
         access_token = create_access_token(subject=user.id)
         return {
