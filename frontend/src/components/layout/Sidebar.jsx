@@ -38,6 +38,16 @@ const NAV_ITEMS = [
     ),
     highlight: true,
   },
+  {
+    path: '/roi-hub',
+    label: 'ROI Hub',
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <path d="M2 13h14M4 10l3-3 3 2 4-5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+        <circle cx="14" cy="4" r="1.5" fill="currentColor"/>
+      </svg>
+    ),
+  },
 ];
 
 const BOTTOM_ITEMS = [

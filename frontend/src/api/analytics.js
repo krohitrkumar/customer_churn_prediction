@@ -23,3 +23,8 @@ export async function getRecentActivity(limit = 15) {
   const res = await client.get('/analytics/recent_activity', { params: { limit } });
   return res.data;
 }
+
+export async function getRoiAnalysis() {
+  const res = await client.get('/analytics/roi_analysis');
+  return res.data;
+}

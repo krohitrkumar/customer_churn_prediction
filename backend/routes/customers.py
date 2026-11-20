@@ -219,19 +219,20 @@ def clean_float(val, default=5.0, min_val=1.0, max_val=10.0) :
     except (ValueError, TypeError):
         return default
 def clean_contract(val: str):
-    value =  str(val).lower().replace(" ","_").replace("-","_").strip()
-    if "two" in value or "2" in value:
+    v = str(val).lower().replace(" ", "_").replace("-", "_").strip()
+    if any(k in v for k in ["two", "2_year", "24", "biennial", "two_year"]):
         return ContractType.TWO_YEAR
-    if "one" in value or "1" in value or "annual" in value:
+    if any(k in v for k in ["one", "1_year", "12", "annual", "yearly", "one_year"]):
         return ContractType.ONE_YEAR
     return ContractType.MONTH_TO_MONTH
+
 def clean_payment(val: str) -> PaymentMethod:
     v = str(val).lower().strip().replace(" ", "_").replace("-", "_")
-    if "card" in v:
+    if any(k in v for k in ["card", "credit", "debit", "visa", "mastercard", "amex"]):
         return PaymentMethod.CARD
-    if "wallet" in v:
+    if any(k in v for k in ["wallet", "digital", "paypal", "apple", "google", "upi", "stripe"]):
         return PaymentMethod.WALLET
-    if "bank" in v or "transfer" in v or "wire" in v:
+    if any(k in v for k in ["bank", "transfer", "wire", "ach", "direct_debit", "net_banking"]):
         return PaymentMethod.BANK
     return PaymentMethod.CARD
 
@@ -251,28 +252,62 @@ async def upload_customers(
 
     try:
         if filename.endswith(".csv"):
-            df= pd.read_csv(io.BytesIO(contents))
-        elif filename.endswith((".xlsx",".xls")):
+            df = pd.read_csv(io.BytesIO(contents))
+        elif filename.endswith((".xlsx", ".xls")):
             df = pd.read_excel(io.BytesIO(contents))
         else:
             raise HTTPException(
-                status_code= status.HTTP_400_BAD_REQUEST,
-                detail= "Invalid file format! please upload a file .csv or .xls,xlsx file."
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid file format! Please upload a .csv, .xlsx, or .xls file."
             )
-    except Exception as e :
+    except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Could not read spreadsheet: {str(e)}"
         )
 
-    df.columns = [str(col).strip().lower().replace(" ", "_").replace("-", "_") for col in df.columns]
-    required_cols = ["customer_code", "first_name", "last_name", "tenure_months", "satisfaction_score"]
-    missing = [c for c in required_cols if c not in df.columns]
-    if missing:
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=f"Missing required columns in spreadsheet: {', '.join(missing)}"
-        )
+    raw_cols = [str(col).strip().lower().replace(" ", "_").replace("-", "_") for col in df.columns]
+    alias_map = {
+        "customer_code": ["customer_code", "customer_id", "cust_id", "userid", "user_id", "id", "account_id", "code"],
+        "first_name": ["first_name", "firstname", "first", "fname"],
+        "last_name": ["last_name", "lastname", "last", "lname", "surname"],
+        "full_name": ["name", "full_name", "customer_name", "client_name"],
+        "tenure_months": ["tenure_months", "tenure", "tenuremonths", "months", "subscription_length", "duration"],
+        "satisfaction_score": ["satisfaction_score", "satisfaction", "csat", "score", "rating", "nps"],
+        "support_calls": ["support_calls", "calls", "tickets", "complaints", "inquiries"],
+        "late_payments": ["late_payments", "late", "delayed_payments", "overdue"],
+        "contract_type": ["contract_type", "contract", "plan", "subscription", "term", "plan_type"],
+        "payment_method": ["payment_method", "payment", "method", "billing", "pay_method"],
+        "region": ["region", "location", "country", "zone", "geo"],
+        "email": ["email", "mail", "email_address"]
+    }
+
+    rename_dict = {}
+    for canonical, aliases in alias_map.items():
+        for alias in aliases:
+            if alias in raw_cols:
+                original_col = df.columns[raw_cols.index(alias)]
+                rename_dict[original_col] = canonical
+                break
+
+    df.rename(columns=rename_dict, inplace=True)
+
+    if "full_name" in df.columns and "first_name" not in df.columns:
+        names = df["full_name"].astype(str).str.strip().str.split(" ", n=1, expand=True)
+        df["first_name"] = names[0]
+        df["last_name"] = names[1] if names.shape[1] > 1 else ""
+
+    if "first_name" not in df.columns:
+        df["first_name"] = "Customer"
+    if "last_name" not in df.columns:
+        df["last_name"] = ""
+    if "customer_code" not in df.columns:
+        df["customer_code"] = [f"CUST-{random.randint(10000, 99999)}" for _ in range(len(df))]
+
+    if "satisfaction_score" in df.columns:
+        numeric_scores = pd.to_numeric(df["satisfaction_score"], errors="coerce").dropna()
+        if len(numeric_scores) > 0 and numeric_scores.max() <= 5.0 and numeric_scores.max() > 1.0:
+            df["satisfaction_score"] = df["satisfaction_score"] * 2.0
     existing_codes = set(code[0] for code in db.query(Customer.customer_code).all())
     valid_records = []
     skipped_count = 0

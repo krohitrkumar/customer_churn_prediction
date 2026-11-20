@@ -50,6 +50,10 @@ def get_analytics_summary(
     unscored_count = total_customers - scored_customers
     critical_rate = round((critical_count / scored_customers * 100), 2) if scored_customers > 0 else 0.0
 
+    avg_ltv = 300.0 + (18.0 * 24.0)
+    arr_at_risk = round(critical_count * avg_ltv * (avg_churn / 100.0), 2)
+    saved_revenue = round(arr_at_risk * 0.65, 2)
+
     summary_data = {
         "total_customers": total_customers,
         "scored_customers": scored_customers,
@@ -59,11 +63,75 @@ def get_analytics_summary(
         "moderate_risk_count": moderate_count,
         "low_risk_count": low_count,
         "unscored_count": unscored_count,
-        "critical_rate_pct": critical_rate
+        "critical_rate_pct": critical_rate,
+        "estimated_arr_at_risk_usd": arr_at_risk,
+        "projected_ai_savings_usd": saved_revenue,
+        "avg_customer_ltv_usd": avg_ltv
     }
 
     cache_service.set_json("analytics_summary", summary_data, expire_seconds=60)
     return AnalyticsSummary(**summary_data)
+
+@router.get("/roi_analysis", status_code=status.HTTP_200_OK)
+def get_roi_analysis(
+    db: db_dependency,
+    current_user: User = Depends(get_current_user)
+):
+    cached_roi = cache_service.get_json("roi_analysis")
+    if cached_roi:
+        return cached_roi
+
+    customers = db.query(Customer).filter(Customer.latest_churn_score.isnot(None)).all()
+
+    heavy_lifters = []
+    high_drain = []
+    total_arr_at_risk = 0.0
+    total_potential_saved = 0.0
+
+    for c in customers:
+        prob = float(c.latest_churn_score or 0.0) / 100.0
+        ltv = 300.0 + (c.tenure_months * 18.0)
+        at_risk_amount = ltv * prob
+
+        if prob > 0.40:
+            total_arr_at_risk += at_risk_amount
+            total_potential_saved += at_risk_amount * 0.65
+
+        c_obj = {
+            "id": c.id,
+            "customer_code": c.customer_code,
+            "name": f"{c.first_name} {c.last_name}".strip(),
+            "tenure_months": c.tenure_months,
+            "contract_type": c.contract_type.value if hasattr(c.contract_type, "value") else str(c.contract_type),
+            "churn_probability": round(float(c.latest_churn_score or 0.0), 1),
+            "estimated_ltv_usd": round(ltv, 2),
+            "support_calls": c.support_calls or 0,
+            "satisfaction_score": c.satisfaction_score
+        }
+
+        if c.tenure_months >= 20 and prob > 0.35:
+            heavy_lifters.append(c_obj)
+        elif (c.support_calls or 0) >= 5 and c.satisfaction_score <= 4.0:
+            high_drain.append(c_obj)
+
+    heavy_lifters.sort(key=lambda x: x["estimated_ltv_usd"], reverse=True)
+    high_drain.sort(key=lambda x: x["support_calls"], reverse=True)
+
+    result_data = {
+        "total_arr_at_risk_usd": round(total_arr_at_risk, 2),
+        "total_projected_savings_usd": round(total_potential_saved, 2),
+        "avg_customer_ltv_usd": 732.0,
+        "heavy_lifters": heavy_lifters[:6],
+        "high_drain_accounts": high_drain[:6],
+        "what_if_scenarios": {
+            "reduce_5pct": round(total_arr_at_risk * 0.15, 2),
+            "reduce_10pct": round(total_arr_at_risk * 0.30, 2),
+            "reduce_20pct": round(total_arr_at_risk * 0.55, 2)
+        }
+    }
+
+    cache_service.set_json("roi_analysis", result_data, expire_seconds=60)
+    return result_data
 
 @router.get("/risk_breakdown", response_model=RiskBreakdownResponse, status_code=status.HTTP_200_OK)
 def get_risk_breakdown(

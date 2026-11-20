@@ -307,6 +307,16 @@ export default function DashboardPage() {
                       {formatScorePct(c.latest_churn_score)}
                     </span>
                     <RiskBadge level={c.latest_risk_level} />
+                    <Button
+                      variant="secondary"
+                      size="xs"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/predict?customerId=${c.id}`);
+                      }}
+                    >
+                      ⚡ Copilot
+                    </Button>
                   </div>
                 </div>
               ))}

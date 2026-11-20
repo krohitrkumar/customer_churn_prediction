@@ -1,0 +1,118 @@
+.roi-hub-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.roi-hero-banner {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(16, 185, 129, 0.12) 100%);
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.roi-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.roi-kpi-card {
+  background: var(--bg-raised);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+}
+
+.roi-kpi-val {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  margin: 6px 0 2px;
+  font-family: var(--font-mono);
+}
+
+.roi-kpi-lbl {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+.roi-kpi-sub {
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  margin: 4px 0 0;
+}
+
+.simulator-card {
+  background: var(--bg-raised);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+}
+
+.slider-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.slider-input {
+  width: 100%;
+  accent-color: var(--brand-primary);
+  height: 6px;
+  cursor: pointer;
+}
+
+.slider-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.segment-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.segment-card {
+  background: var(--bg-raised);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+}
+
+.customer-segment-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  margin-top: 10px;
+  transition: var(--transition-fast);
+}
+
+.customer-segment-row:hover {
+  border-color: var(--border-accent);
+}
+
+@media (max-width: 768px) {
+  .roi-hero-banner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .segment-grid {
+    grid-template-columns: 1fr;
+  }
+}

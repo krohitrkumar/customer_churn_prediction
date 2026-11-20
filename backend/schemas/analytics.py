@@ -12,6 +12,9 @@ class AnalyticsSummary(BaseModel):
     low_risk_count: int
     unscored_count: int
     critical_rate_pct: float
+    estimated_arr_at_risk_usd: Optional[float] = 0.0
+    projected_ai_savings_usd: Optional[float] = 0.0
+    avg_customer_ltv_usd: Optional[float] = 0.0
 
 class CategoryBreakdownItem(BaseModel):
     category: str
