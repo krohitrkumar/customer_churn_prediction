@@ -29,16 +29,52 @@
 
 ---
 
-## 📐 System Architecture & Data Flow
+## 📐 System Architecture & Interactive Flow
 
-<div align="center">
-  <a href="assets/architecture.png" target="_blank">
-    <img src="assets/architecture.svg" alt="Retentrix End-to-End System Architecture" width="100%" />
-  </a>
-  <p align="center">
-    <sub>🔍 <i>Click on the architecture diagram above or <a href="assets/architecture.png" target="_blank">open the 4K High-Resolution PNG</a> to zoom in on any module, service, or data flow connector.</i></sub>
-  </p>
-</div>
+```mermaid
+flowchart TD
+    subgraph ClientLayer["👤 Client Application Layer (Vercel Edge Network)"]
+        User["End Users: CSM | Admin | Analyst"] --> SPA["React 18 + Vite SPA"]
+        SPA --> Views["Views: Dashboard | Customers | Copilot | ROI Hub | OTP Security"]
+        Views --> Axios["Axios HTTP Client (JWT Bearer Token Interceptors)"]
+    end
+
+    subgraph BackendGateway["⚡ API Routing & Gateway (FastAPI on Render)"]
+        Axios -->|"HTTPS / REST API"| FastAPI["FastAPI Application (main.py)"]
+        FastAPI --> AuthRoute["routes/auth.py (Register, Login, OTP, JWT, RBAC)"]
+        FastAPI --> CustRoute["routes/customers.py (CRUD, Resilient CSV/Excel Import)"]
+        FastAPI --> PredRoute["routes/predictions.py (Predict, SHAP, Copilot, LinUCB)"]
+        FastAPI --> AnalRoute["routes/analytics.py (Executive KPIs, ARR at Risk)"]
+    end
+
+    subgraph ServiceLayer["🧠 Business Logic & AI Services Layer"]
+        PredRoute --> MLService["ml_services.py (GBM Churn Scoring & Playbooks)"]
+        PredRoute --> SHAPService["shap_service.py (TreeExplainer Attribution)"]
+        PredRoute --> GenAIService["genai_service.py (Groq Qwen 3 27B Copilot)"]
+        PredRoute --> RLService["rl_service.py (LinUCB Contextual Bandit)"]
+        AuthRoute --> EmailService["email_service.py (SMTP/TLS Relay & HTML OTP)"]
+        AuthRoute --> CacheService["cache_service.py (Redis Token Bucket Limiter)"]
+    end
+
+    subgraph MLPipeline["🤖 Offline Machine Learning Lifecycle"]
+        RawData["data/customer churn dataset.csv (7 Features)"] --> Notebook["notebooks/customer_churn.ipynb (EDA & Tuning)"]
+        Notebook --> ModelArtifact["artifacts/churn_model.pkl (GradientBoostingClassifier)"]
+        ModelArtifact -.->|"joblib.load()"| MLService
+        ModelArtifact -.->|"TreeExplainer"| SHAPService
+    end
+
+    subgraph CloudStores["🐘 Managed Cloud Datastores & Cache"]
+        FastAPI -->|"SQLAlchemy Async Engine"| NeonDB[("Neon Cloud PostgreSQL: users | customers | predictions")]
+        CacheService -->|"TLS Connection"| RedisDB[("Upstash Cloud Redis: OTP Tokens | Rate Limits")]
+    end
+
+    subgraph ExternalCloud["☁️ External Cloud Services"]
+        GenAIService -->|"Sub-second LPU Inference"| GroqAPI["Groq Cloud API (Qwen 3 27B LLM)"]
+        EmailService -->|"Port 587 STARTTLS"| SMTPRelay["Gmail SMTP Server (OTP & Alerts Dispatch)"]
+    end
+
+    RLService -.->|"Online Reward Feedback (+1/-1)"| RLService
+```
 
 ---
 
@@ -229,9 +265,7 @@ CFO-grade financial dashboard translating predictive probabilities into monetary
 customer_churn_prediction/
 │
 ├── assets/                           Visual documentation assets
-│   ├── logo.svg                      Official Retentrix vector logo
-│   ├── architecture.svg              Vector system architecture diagram
-│   └── architecture.png              4K high-resolution architecture export
+│   └── logo.svg                      Official Retentrix vector logo
 │
 ├── backend/                          FastAPI production application
 │   ├── main.py                       FastAPI initialization, CORS regex, route mounts
