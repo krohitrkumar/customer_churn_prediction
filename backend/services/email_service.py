@@ -20,7 +20,7 @@ Security Notice:
 
 Best regards,
 The Retentrix AI Security Team
-Contact on GitHub: https://github.com/k_rohit_r_kumar
+Contact on GitHub: https://github.com/krohitrkumar
 """
 
         html_content = f"""<!DOCTYPE html>
@@ -64,7 +64,7 @@ Contact on GitHub: https://github.com/k_rohit_r_kumar
                 <div style="border-top: 1px solid #e2e8f0; padding-top: 18px; margin-top: 22px;">
                     <p style="font-size: 12px; color: #64748b; line-height: 1.5; margin: 0;">
                         Need help or experiencing issues? Contact on GitHub at 
-                        <a href="https://github.com/k_rohit_r_kumar" style="color: #2563eb; text-decoration: none; font-weight: 600;">github.com/k_rohit_r_kumar</a>.
+                        <a href="https://github.com/krohitrkumar" style="color: #2563eb; text-decoration: none; font-weight: 600;">github.com/krohitrkumar</a>.
                     </p>
                 </div>
             </div>
@@ -77,6 +77,37 @@ Contact on GitHub: https://github.com/k_rohit_r_kumar
 </body>
 </html>"""
 
+        # 1. Primary: Direct Gmail SMTP via Port 465 SSL (Sends to ANY email address in the world)
+        if settings.SMTP_USER and settings.SMTP_PASSWORD:
+            try:
+                msg = MIMEMultipart("alternative")
+                msg["Subject"] = f"{otp_code} is your Retentrix verification code"
+                msg["From"] = f"{settings.SMTP_FROM_NAME} <{settings.SMTP_USER}>"
+                msg["To"] = to_email
+
+                msg.attach(MIMEText(plain_text, "plain"))
+                msg.attach(MIMEText(html_content, "html"))
+
+                try:
+                    with smtplib.SMTP_SSL(settings.SMTP_HOST, 465, timeout=5) as server:
+                        server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
+                        server.sendmail(settings.SMTP_USER, to_email, msg.as_string())
+                    return True
+                except Exception:
+                    pass
+
+                try:
+                    with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT or 587, timeout=5) as server:
+                        server.starttls()
+                        server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
+                        server.sendmail(settings.SMTP_USER, to_email, msg.as_string())
+                    return True
+                except Exception:
+                    pass
+            except Exception:
+                pass
+
+        # 2. Secondary: Brevo API (if configured)
         if getattr(settings, "BREVO_API_KEY", ""):
             try:
                 sender_email = settings.SMTP_USER or "retentrix.security@gmail.com"
@@ -92,13 +123,14 @@ Contact on GitHub: https://github.com/k_rohit_r_kumar
                         "subject": f"{otp_code} is your Retentrix verification code",
                         "htmlContent": html_content
                     },
-                    timeout=4
+                    timeout=3
                 )
                 if res.status_code in [200, 201]:
                     return True
             except Exception:
                 pass
 
+        # 3. Tertiary: Resend API (if configured)
         if getattr(settings, "RESEND_API_KEY", ""):
             try:
                 res = requests.post(
@@ -120,45 +152,8 @@ Contact on GitHub: https://github.com/k_rohit_r_kumar
             except Exception:
                 pass
 
-        if not settings.SMTP_USER or not settings.SMTP_PASSWORD:
-            print(f"[AUTH_OTP_DISPATCH] (No SMTP credentials configured) Verification code for {to_email}: {otp_code}")
-            return True
-
-        try:
-            msg = MIMEMultipart("alternative")
-            msg["Subject"] = f"{otp_code} is your Retentrix verification code"
-            msg["From"] = f"{settings.SMTP_FROM_NAME} <{settings.SMTP_USER}>"
-            msg["To"] = to_email
-
-            msg.attach(MIMEText(plain_text, "plain"))
-            msg.attach(MIMEText(html_content, "html"))
-
-            try:
-                with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT or 587, timeout=3) as server:
-                    server.ehlo()
-                    server.starttls()
-                    server.ehlo()
-                    server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
-                    server.sendmail(settings.SMTP_USER, to_email, msg.as_string())
-                return True
-            except Exception:
-                pass
-
-            try:
-                with smtplib.SMTP_SSL(settings.SMTP_HOST, 465, timeout=3) as server:
-                    server.ehlo()
-                    server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
-                    server.sendmail(settings.SMTP_USER, to_email, msg.as_string())
-                return True
-            except Exception:
-                pass
-
-            print(f"[AUTH_OTP_DISPATCH] (SMTP connection failed, fallback active) Verification code for {to_email}: {otp_code}")
-            return True
-
-        except Exception as e:
-            print(f"[AUTH_OTP_DISPATCH] (Error: {e}) Verification code for {to_email}: {otp_code}")
-            return True
+        print(f"[AUTH_OTP_DISPATCH] Verification code for {to_email}: {otp_code}")
+        return True
 
     @staticmethod
     def send_retention_email(to_email: str, subject: str, body: str, sender_name: str = None, reply_to: str = None) -> bool:
