@@ -1,217 +1,177 @@
-# 🧠 Customer Churn Prediction & Retention Intelligence System
+# 🧠 Retentrix: AI Customer Churn Intelligence & Retention Copilot
 
-Hey there! 👋 Welcome to my **Customer Churn Prediction & Retention Intelligence System**. 
-
-This is a complete full-stack web application that uses Machine Learning to predict whether a customer is likely to leave (churn) or stay. It doesn’t just give a probability score — it also automatically generates **smart retention playbooks** (action plans) tailored to why the customer might be unhappy (like high support calls, low satisfaction rating, or late payment history).
+**Retentrix** is an enterprise-grade AI customer churn prediction and retention platform. It goes beyond basic probability classification by combining **Machine Learning (Gradient Boosting)**, **Explainable AI (SHAP TreeExplainer)**, **Generative AI (Groq Cloud LLM)**, and **Reinforcement Learning (LinUCB Contextual Multi-Armed Bandit)** to predict customer attrition, pinpoint exact risk drivers, simulate portfolio Net ROI, and prescribe automated retention playbooks.
 
 ---
 
-## 🔗 Live Working Project
-
-You can try the live application directly in your browser:
-
-* 🌐 **Frontend Web App (Live on Vercel):** [https://customerchurnprediction-id-l.vercel.app](https://customerchurnprediction-id-l.vercel.app)
-* ⚡ **Production Backend API (Live on Vercel):** [https://customer-churn-prediction-kappa-three.vercel.app](https://customer-churn-prediction-kappa-three.vercel.app)
-* 📖 **Interactive Swagger API Docs:** [https://customer-churn-prediction-kappa-three.vercel.app/docs](https://customer-churn-prediction-kappa-three.vercel.app/docs)
-* 🐘 **Database:** Neon Serverless PostgreSQL Cloud Database
-* 📧 **Email Delivery:** Resend HTTPS Transactional Email API
-
----
-
-## 🏗️ System Architecture
+## 🏗️ High-Level System Architecture
 
 ```
-                       ┌─────────────────────────────────────────┐
-                       │           React 18 + Vite SPA           │
-                       │           (Hosted on Vercel)            │
-                       │  • Interactive Dashboard & Analytics    │
-                       │  • Pure SVG Arc Churn Risk Gauge        │
-                       │  • CSV/Excel Drag & Drop Upload Engine  │
-                       └────────────────────┬────────────────────┘
-                                            │
-                                            │ HTTPS (JSON / Form-Data)
-                                            ▼
-                       ┌─────────────────────────────────────────┐
-                       │          FastAPI REST Backend           │
-                       │          (Hosted on Vercel)            │
-                       │  • JWT Auth & Role-Based Access         │
-                       │  • ML Inference Engine                  │
-                       │  • Automated Playbook Recommendation    │
-                       │  • Bulk File Processor (Pandas/OpenPyXL)│
-                       └───────┬────────────┬────────────┬───────┘
-                               │            │            │
-            ┌──────────────────┘            │            └──────────────────┐
-            ▼                               ▼                               ▼
-┌───────────────────────┐       ┌───────────────────────┐       ┌───────────────────────┐
-│  Neon PostgreSQL DB   │       │  Scikit-Learn Model   │       │   Resend Email API    │
-│  • Users & RBAC Roles │       │  • Gradient Boosting  │       │  • 6-Digit OTP Mails  │
-│  • Customer Profiles  │       │  • 7 Behavioral Input │       │  • Branded HTML UI    │
-│  • Prediction History │       │    Features Pipeline  │       │  • Instant 0.5s Send  │
-└───────────────────────┘       └───────────────────────┘       └───────────────────────┘
+                               ┌─────────────────────────────────────────────────────┐
+                               │                 React 18 + Vite SPA                 │
+                               │  • Real-time Churn Probability & SVG Risk Gauge    │
+                               │  • Resilient CSV & Excel File Ingestion Engine      │
+                               │  • SHAP Impact & Feature Attribution Visualizer     │
+                               │  • Retentrix AI Copilot with 1-Click Direct Email   │
+                               │  • Executive ROI & Revenue Hub (/roi-hub)           │
+                               └──────────────────────────┬──────────────────────────┘
+                                                          │
+                                                          │ HTTPS / JSON (REST API)
+                                                          ▼
+                               ┌─────────────────────────────────────────────────────┐
+                               │           FastAPI Backend (Render Linux VM)         │
+                               │  • JWT Authentication & Role-Based Access Control   │
+                               │  • Asynchronous Rate Limiting (SlowAPI)             │
+                               │  • Vectorized Batch Processing (NumPy & Pandas)     │
+                               │  • Vectorized Multi-Threaded SMTP Dispatch          │
+                               └───────┬──────────┬──────────┬──────────┬──────────┬─┘
+                                       │          │          │          │          │
+         ┌─────────────────────────────┘          │          │          │          └─────────────────────────────┐
+         ▼                                        ▼          │          ▼                                        ▼
+┌───────────────────────┐ ┌────────────────────────┐         │ ┌────────────────────────┐ ┌────────────────────────┐
+│  Supervised ML Engine │ │ Explainable AI (SHAP)  │         │ │ Retentrix GenAI Agent  │ │ Reinforcement Learning │
+│  • GradientBoosting   │ │ • TreeExplainer Model  │         │ │ • Groq Cloud Engine    │ │ • LinUCB Contextual    │
+│  • 7 Behavioral Inputs│ │ • Feature Attributions │         │ │ • qwen/qwen3.8-27b     │ │   Multi-Armed Bandit   │
+│  • Calibrated Prob.   │ │ • Risk vs Protective   │         │ │ • Root-Cause Diagnosis │ │ • Action Cost vs Net   │
+│    (0% to 100%)       │ │   Factor Analysis      │         │ │ • Direct Email Drafting│ │   LTV ROI Optimization │
+└───────────────────────┘ └────────────────────────┘         │ └────────────────────────┘ └────────────────────────┘
+                                                             │
+                                                             ▼
+                                 ┌─────────────────────────────────────────────────────┐
+                                 │                Cloud Infrastructure                 │
+                                 │  • Neon Cloud: Serverless PostgreSQL Database       │
+                                 │  • Upstash Cloud: Redis Caching Layer (<5ms)        │
+                                 │  • Gmail SMTP: Port 465 SSL / 587 TLS Verification  │
+                                 │  • Render: Continuous Web Service Container         │
+                                 └─────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 💡 Why I Built This & The Story Behind It
+## ✨ Enterprise Capabilities
 
-In subscription businesses (SaaS, Telecom, E-commerce), losing an existing customer costs 5x more than acquiring a new one. I wanted to build an end-to-end system where a Customer Success Manager or Business Owner can:
-1. View all their customer accounts in one clean, responsive dashboard.
-2. Get real-time ML risk scores (Critical, Moderate, Low).
-3. Upload whole CSV or Excel spreadsheets (even with 1000+ rows) to batch predict churn instantly.
-4. Know **exactly what action to take** to retain the customer before they cancel.
+### 1. Explainable AI (SHAP TreeExplainer)
+Rather than acting as an uninterpretable black box, Retentrix computes Shapley values for each individual prediction:
+* Identifies the primary **Risk Drivers** pushing the customer toward churn (e.g., month-to-month contracts, high technical support tickets, low CSAT rating).
+* Highlights **Protective Factors** mitigating risk (e.g., long subscription tenure, automatic billing).
+* Quantifies exact percentage impact for every behavioral attribute.
 
-### 🤖 How the Frontend was Built (AI Prompt Engineering)
-My core strengths are in **Machine Learning, Python, and Backend Development**. I had minimal prior frontend experience, so I built the entire React + Vite frontend using **iterative AI prompt engineering**:
-* I designed the full system architecture, state management, API contracts, and component layouts.
-* Used targeted prompts to generate the UI components, interactive animated donut charts, custom SVG churn gauges, and client-side caching.
-* Solved real production challenges like upload timeouts, sliding JWT sessions, and instant data rendering purely through architectural prompt guidance.
+### 2. Generative AI Retention Copilot
+Powered by Groq Cloud (`qwen/qwen3.8-27b`):
+* **Root-Cause Diagnosis:** Synthesizes SHAP attributions into executive bullet points explaining why the customer is dissatisfied.
+* **Prescriptive Action Plan:** Formulates step-by-step strategies for Customer Success Managers (CSMs).
+* **Direct Outreach Email Generation:** Dynamically drafts personalized retention emails signed by the logged-in CSM.
+* **1-Click SMTP Dispatch:** Role-guarded email dispatch with dynamic `From` and `Reply-To` headers.
+
+### 3. Reinforcement Learning (LinUCB Contextual Multi-Armed Bandit)
+* Implements a 5-arm Contextual Bandit:
+  1. `Standard Proactive Nudge` ($0 cost)
+  2. `Concierge Onboarding Review` ($25 cost)
+  3. `15% Annual Renewal Discount` ($50 cost)
+  4. `Priority Feature Tier Upgrade` ($75 cost)
+  5. `Executive Sponsor Intervention` ($120 cost)
+* Optimizes for **Net ROI**: $\text{Net ROI} = \mathbb{E}[\text{Saved Revenue}] - \text{Intervention Cost}$.
+* Dynamically incorporates real-time outcome feedback (+Reward / -Reward) to balance exploration and exploitation.
+
+### 4. Resilient CSV & Excel Ingestion
+* Supports both `.csv` and `.xlsx` files up to 5,000 rows.
+* Intelligent column alias mapping (e.g., `Customer ID`, `customer_code`, `Tenure Months`, `tenure_months`, `CSAT`, `satisfaction`).
+* Normalized contract pricing tolerance for Netflix-style plans, quarterly billing, and custom commitments.
+* Vectorized batch prediction (`predict_churn_batch`) and batch database insertion (`db.add_all()`).
+
+### 5. Executive Revenue & ROI Hub (`/roi-hub`)
+* Real-time portfolio financial health tracking.
+* **Interactive What-If Churn Reduction Simulator:** Models how reducing churn by 2% to 30% affects annual recurring revenue and net profit.
+* **Heavy Lifters (VIP Accounts):** Highlights high-LTV customers requiring immediate retention attention.
+* **High-Drain Accounts:** Flags accounts where service and incentive costs exceed recoverable lifetime value.
 
 ---
 
-## ✨ Key Features
+## 🛠️ Technology Stack
 
-* **⚡ Real-Time ML Churn Scoring:** Enter customer behavioral metrics to get an instant churn probability score (0% to 100%) powered by a trained Gradient Boosting ML model.
-* **📋 Dynamic Retention Playbooks:** Generates actionable business strategies based on specific customer conditions (e.g., offer 15% annual renewal discount, assign priority technical support, schedule executive check-in).
-* **📁 Bulk CSV & Excel Uploader:** Upload `.csv` or `.xlsx` files. The system checks column names on the client-side first, skips duplicates, and runs AI predictions for the entire file in parallel.
-* **🌱 1-Click Demo Seed Generator:** Don't have sample data? Click the seed button on the dashboard to immediately populate 50 realistic accounts with live predictions.
-* **📊 Visual Risk Analytics:** Real-time breakdown of customer churn risk across contract lengths (Month-to-month, 1 year, 2 years), payment channels, and regions (North America, Europe, Asia Pacific, LATAM, Africa).
-* **🔐 Enterprise Authentication & Roles:** 
-  * Passwords securely hashed with `bcrypt`.
-  * Secure JWT session tokens with auto-refresh.
-  * 6-digit passwordless Email OTP sign-in with branded HTML emails delivered via **Resend API**.
-  * Role permissions: **Admin** (Full Access), **CSM** (Manage Customers & Run Predictions), and **Viewer** (Read-Only).
-
----
-
-## 🛠️ Tech Stack
-
-| Layer | Technologies Used |
+| Layer | Technologies |
 | :--- | :--- |
-| **Frontend** | React 18, Vite, Radix UI Primitives, Axios, Custom CSS (Built via Prompt Engineering) |
-| **Backend** | Python 3.11/3.13, FastAPI, SQLAlchemy 2.0 ORM, Pydantic v2, Uvicorn |
-| **Machine Learning** | Scikit-Learn 1.7.1, GradientBoostingClassifier, Joblib, Pandas, NumPy |
-| **Database** | Neon Serverless PostgreSQL (Production) / SQLite (Local Dev) |
-| **Email Service** | Resend HTTPS Email API (Transactional 6-Digit OTP Delivery) |
-| **Hosting & Cloud** | Vercel (FastAPI Serverless Backend + React Frontend) |
+| **Frontend** | React 18, Vite, Radix UI Primitives, Axios, Custom Modular CSS |
+| **Backend** | Python 3.11, FastAPI, SQLAlchemy 2.0 ORM, Pydantic v2, Uvicorn |
+| **Machine Learning** | Scikit-Learn 1.7.1, GradientBoostingClassifier, Joblib, NumPy, Pandas |
+| **Explainable AI** | SHAP (TreeExplainer) |
+| **Generative AI** | Groq Cloud API (`qwen/qwen3.8-27b`) |
+| **Reinforcement Learning** | LinUCB Contextual Multi-Armed Bandit (NumPy) |
+| **Caching** | Upstash Redis Cloud |
+| **Database** | Neon Serverless PostgreSQL (Production) / SQLite (Local Development) |
+| **Email Service** | Gmail SMTP SSL (Port 465) / TLS (Port 587) |
+| **Deployment** | Render (Backend Web Service Linux Container) & Vercel (Frontend SPA) |
 
 ---
 
-## 🔬 How the Machine Learning Model Works
+## 🚀 Local Development Setup
 
-The ML pipeline is trained on historical customer behavioral data using 7 core features:
-
-```
-Customer Input (7 Features)
-         │
-         ▼
-┌────────────────────────────────────────────────────────┐
-│ 1. Preprocessing (ColumnTransformer)                   │
-│    • OneHotEncoding for: contract_type, payment_method,│
-│      region                                            │
-│    • Passthrough for: tenure, calls, late payments,    │
-│      satisfaction score                                │
-└────────────────────────┬───────────────────────────────┘
-                         │
-                         ▼
-┌────────────────────────────────────────────────────────┐
-│ 2. Model: GradientBoostingClassifier                   │
-│    • 200 estimators, max depth 5, learning rate 0.05  │
-└────────────────────────┬───────────────────────────────┘
-                         │
-                         ▼
-             Churn Probability (0% - 100%)
-                         │
-         ┌───────────────┼───────────────┐
-         ▼               ▼               ▼
-     Critical        Moderate           Low
-     (> 75%)        (40% - 75%)       (< 40%)
-```
-
-### The 7 Model Input Features:
-
-| Feature | Type | Range | What It Means |
-| :--- | :--- | :--- | :--- |
-| `tenure_months` | Integer | 1 to 72 | How many months the customer has been subscribed |
-| `support_calls` | Integer | 0 to 20 | Number of times they called support (high calls = frustration) |
-| `late_payments` | Integer | 0 to 12 | Number of late invoice payments |
-| `satisfaction_score` | Float | 1.0 to 10.0 | Customer rating (scores ≤ 3.0 mean high churn risk) |
-| `contract_type` | Categorical | Month-to-Month, 1-Year, 2-Year | Subscription term |
-| `payment_method` | Categorical | Card, Digital Wallet, Bank Transfer | Payment channel |
-| `region` | Categorical | North America, Europe, Asia, LATAM, Africa, South America | Geographic region |
-
----
-
-## 🚀 How to Run Locally
-
-Want to run this project on your own machine? Follow these simple steps:
-
-### 1. Clone the repository
+### 1. Clone the Repository
 ```bash
 git clone https://github.com/krohitrkumar/customer_churn_prediction.git
 cd customer_churn_prediction
 ```
 
-### 2. Set up the Backend
+### 2. Configure Backend
 ```bash
-# Create and activate a Python virtual environment
 python -m venv venv
 
-# On Windows:
+# Windows:
 venv\Scripts\activate
-# On Mac/Linux:
+# macOS/Linux:
 source venv/bin/activate
 
-# Install dependencies
 pip install -r requirements.txt
-
-# Start FastAPI backend
-python main.py
 ```
-Your backend will be live at `http://localhost:8080`, and Swagger documentation at `http://localhost:8080/docs`.
 
-### 3. Set up the Frontend
-Open a new terminal window:
+Create a `.env` file in `backend/.env`:
+```env
+DATABASE_URL=postgresql://<user>:<password>@<neon-host>/neondb?sslmode=require
+SECRET_KEY=your-secure-jwt-secret-key
+GROQ_API_KEY=your-groq-api-key
+GROQ_MODEL=qwen/qwen3.8-27b
+REDIS_URL=rediss://default:<token>@<upstash-endpoint>:6379
+SMTP_USER=your-email@gmail.com
+SMTP_PASSWORD=your-gmail-16-char-app-password
+SMTP_FROM_NAME=Retentrix Intelligence
+```
+
+Start the FastAPI development server:
+```bash
+uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
+```
+API docs will be available at `http://localhost:8000/docs`.
+
+### 3. Configure Frontend
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-Open your browser and visit `http://localhost:5173` (or `http://localhost:3000`).
+Open `http://localhost:5173` in your browser.
 
 ---
 
-## 📁 Project Folder Structure
+## ☁️ Production Deployment on Render
 
-```
-customer_churn_prediction/
-│
-├── backend/                       # FastAPI Backend
-│   ├── main.py                    # API routing & CORS configuration
-│   ├── database/                  # DB connection, security & config
-│   ├── models/                    # SQLAlchemy models (User, Customer, Prediction)
-│   ├── routes/                    # API endpoints (auth, customers, predict, analytics)
-│   ├── schemas/                   # Pydantic request/response schemas
-│   └── services/                  # ML prediction service & Resend/SMTP email service
-│
-├── frontend/                      # React 18 + Vite Frontend
-│   ├── src/
-│   │   ├── api/                   # API clients and endpoints
-│   │   ├── components/            # Reusable UI components & charts
-│   │   ├── context/               # AuthContext (JWT & login state)
-│   │   ├── hooks/                 # Custom hooks (caching & notifications)
-│   │   ├── pages/                 # Dashboard, Customers, Predict, Login, Register
-│   │   └── styles/                # Global theme CSS and animations
-│   └── package.json
-│
-├── ml_pipeline/                   # Machine Learning Pipeline
-│   ├── train.py                   # Model training script
-│   ├── data/                      # Dataset files
-│   └── artifacts/                 # Saved model (churn_model.pkl)
-│
-├── main.py                        # Root server entrypoint
-├── Procfile                       # Cloud deployment configuration
-└── requirements.txt               # Python package dependencies
-```
+### Backend Web Service Settings
+1. Create a new **Web Service** on [Render](https://render.com).
+2. Connect your GitHub repository: `https://github.com/krohitrkumar/customer_churn_prediction`.
+3. Configure settings:
+   - **Environment:** `Python`
+   - **Region:** `Singapore` or `Oregon`
+   - **Branch:** `main`
+   - **Build Command:** `pip install -r requirements.txt`
+   - **Start Command:** `uvicorn backend.main:app --host 0.0.0.0 --port $PORT`
+4. Add Environment Variables:
+   - `DATABASE_URL`
+   - `SECRET_KEY`
+   - `GROQ_API_KEY`
+   - `GROQ_MODEL` (`qwen/qwen3.8-27b`)
+   - `REDIS_URL`
+   - `SMTP_USER`
+   - `SMTP_PASSWORD`
+   - `SMTP_FROM_NAME`
 
 ---
 
@@ -219,6 +179,4 @@ customer_churn_prediction/
 
 **Rohit Kumar**
 * GitHub: [@krohitrkumar](https://github.com/krohitrkumar)
-* Live Project: [Retentrix Churn Intelligence](https://customerchurnprediction-id-l.vercel.app)
-
-If you find this project helpful or interesting, feel free to give it a ⭐ on GitHub!
+* Contact: [https://github.com/k_rohit_r_kumar](https://github.com/k_rohit_r_kumar)
