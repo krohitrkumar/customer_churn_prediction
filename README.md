@@ -21,7 +21,7 @@
 
 | 🌐 Live Frontend (Vercel) | ⚡ Live Backend API (Render) | 📖 Interactive API Docs (Swagger) |
 |:-------------------------:|:---------------------------:|:----------------------------------:|
-| [customerchurnprediction-roan.vercel.app](https://customerchurnprediction-roan.vercel.app) | [retentrix-ai.onrender.com](https://retentrix-ai.onrender.com) | [retentrix-ai.onrender.com/docs](https://retentrix-ai.onrender.com/docs) |
+| [customerchurnprediction-roan.vercel.app](https://customerchurnprediction-roan.vercel.app) | [retentrix.onrender.com](https://retentrix.onrender.com) | [retentrix.onrender.com/docs](https://retentrix.onrender.com/docs) |
 
 </div>
 
@@ -424,7 +424,7 @@ npm run dev
 - **Root Directory**: `frontend`
 - **Build Command**: `npm run build`
 - **Output Directory**: `dist`
-- **Environment Variables**: `VITE_API_BASE_URL=https://retentrix-ai.onrender.com`
+- **Environment Variables**: `VITE_API_BASE_URL=https://retentrix.onrender.com`
 
 ---
 
