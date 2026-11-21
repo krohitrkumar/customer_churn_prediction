@@ -35,6 +35,7 @@ try:
 
         RESEND_API_KEY: str = ""
         BREVO_API_KEY: str = ""
+        SENDGRID_API_KEY: str = ""
         SMTP_HOST: str = "smtp.gmail.com"
         SMTP_PORT: int = 587
         SMTP_USER: str = ""

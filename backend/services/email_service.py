@@ -77,37 +77,7 @@ Contact on GitHub: https://github.com/krohitrkumar
 </body>
 </html>"""
 
-        # 1. Primary: Direct Gmail SMTP via Port 465 SSL (Sends to ANY email address in the world)
-        if settings.SMTP_USER and settings.SMTP_PASSWORD:
-            try:
-                msg = MIMEMultipart("alternative")
-                msg["Subject"] = f"{otp_code} is your Retentrix verification code"
-                msg["From"] = f"{settings.SMTP_FROM_NAME} <{settings.SMTP_USER}>"
-                msg["To"] = to_email
-
-                msg.attach(MIMEText(plain_text, "plain"))
-                msg.attach(MIMEText(html_content, "html"))
-
-                try:
-                    with smtplib.SMTP_SSL(settings.SMTP_HOST, 465, timeout=5) as server:
-                        server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
-                        server.sendmail(settings.SMTP_USER, to_email, msg.as_string())
-                    return True
-                except Exception:
-                    pass
-
-                try:
-                    with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT or 587, timeout=5) as server:
-                        server.starttls()
-                        server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
-                        server.sendmail(settings.SMTP_USER, to_email, msg.as_string())
-                    return True
-                except Exception:
-                    pass
-            except Exception:
-                pass
-
-        # 2. Secondary: Brevo API (if configured)
+        # 1. Primary on Cloud Hosting: HTTPS Port 443 APIs (Render Free Tier blocks raw SMTP 465/587)
         if getattr(settings, "BREVO_API_KEY", ""):
             try:
                 sender_email = settings.SMTP_USER or "retentrix.security@gmail.com"
@@ -123,14 +93,35 @@ Contact on GitHub: https://github.com/krohitrkumar
                         "subject": f"{otp_code} is your Retentrix verification code",
                         "htmlContent": html_content
                     },
-                    timeout=3
+                    timeout=5
                 )
                 if res.status_code in [200, 201]:
                     return True
             except Exception:
                 pass
 
-        # 3. Tertiary: Resend API (if configured)
+        if getattr(settings, "SENDGRID_API_KEY", ""):
+            try:
+                sender_email = settings.SMTP_USER or "retentrix.security@gmail.com"
+                res = requests.post(
+                    "https://api.sendgrid.com/v3/mail/send",
+                    headers={
+                        "Authorization": f"Bearer {settings.SENDGRID_API_KEY}",
+                        "Content-Type": "application/json"
+                    },
+                    json={
+                        "personalizations": [{"to": [{"email": to_email}]}],
+                        "from": {"email": sender_email, "name": settings.SMTP_FROM_NAME},
+                        "subject": f"{otp_code} is your Retentrix verification code",
+                        "content": [{"type": "text/html", "value": html_content}]
+                    },
+                    timeout=5
+                )
+                if res.status_code in [200, 202]:
+                    return True
+            except Exception:
+                pass
+
         if getattr(settings, "RESEND_API_KEY", ""):
             try:
                 res = requests.post(
@@ -145,10 +136,40 @@ Contact on GitHub: https://github.com/krohitrkumar
                         "subject": f"{otp_code} is your Retentrix verification code",
                         "html": html_content
                     },
-                    timeout=3
+                    timeout=4
                 )
                 if res.status_code in [200, 201]:
                     return True
+            except Exception:
+                pass
+
+        # 2. Localhost / Paid Compute: Traditional SMTP
+        if settings.SMTP_USER and settings.SMTP_PASSWORD:
+            try:
+                msg = MIMEMultipart("alternative")
+                msg["Subject"] = f"{otp_code} is your Retentrix verification code"
+                msg["From"] = f"{settings.SMTP_FROM_NAME} <{settings.SMTP_USER}>"
+                msg["To"] = to_email
+
+                msg.attach(MIMEText(plain_text, "plain"))
+                msg.attach(MIMEText(html_content, "html"))
+
+                try:
+                    with smtplib.SMTP_SSL(settings.SMTP_HOST, 465, timeout=3) as server:
+                        server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
+                        server.sendmail(settings.SMTP_USER, to_email, msg.as_string())
+                    return True
+                except Exception:
+                    pass
+
+                try:
+                    with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT or 587, timeout=3) as server:
+                        server.starttls()
+                        server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
+                        server.sendmail(settings.SMTP_USER, to_email, msg.as_string())
+                    return True
+                except Exception:
+                    pass
             except Exception:
                 pass
 
