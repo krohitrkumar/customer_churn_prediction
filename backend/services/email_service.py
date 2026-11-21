@@ -1,3 +1,4 @@
+import os
 import requests
 import smtplib
 from email.mime.text import MIMEText
@@ -78,27 +79,44 @@ Contact on GitHub: https://github.com/krohitrkumar
 </html>"""
 
         # 1. Primary on Cloud Hosting: HTTPS Port 443 APIs (Render Free Tier blocks raw SMTP 465/587)
-        if getattr(settings, "BREVO_API_KEY", ""):
-            try:
-                sender_email = settings.SMTP_USER or "retentrix.security@gmail.com"
-                res = requests.post(
-                    "https://api.brevo.com/v3/smtp/email",
-                    headers={
-                        "api-key": settings.BREVO_API_KEY,
-                        "Content-Type": "application/json"
-                    },
-                    json={
-                        "sender": {"name": settings.SMTP_FROM_NAME, "email": sender_email},
-                        "to": [{"email": to_email}],
-                        "subject": f"{otp_code} is your Retentrix verification code",
-                        "htmlContent": html_content
-                    },
-                    timeout=5
-                )
-                if res.status_code in [200, 201]:
-                    return True
-            except Exception:
-                pass
+        brevo_key = os.getenv("BREVO_API_KEY", "").strip() or getattr(settings, "BREVO_API_KEY", "").strip()
+        if brevo_key:
+            sender_candidates = []
+            custom_sender = os.getenv("BREVO_SENDER_EMAIL", "").strip() or getattr(settings, "BREVO_SENDER_EMAIL", "").strip()
+            if custom_sender:
+                sender_candidates.append(custom_sender)
+            if settings.SMTP_USER:
+                sender_candidates.append(settings.SMTP_USER.strip())
+            sender_candidates.extend(["rohitkumar.adgitm.aids@gmail.com", "ramn1237@gmail.com", "retentrix.security@gmail.com"])
+
+            seen_senders = set()
+            for s_email in sender_candidates:
+                if not s_email or s_email in seen_senders:
+                    continue
+                seen_senders.add(s_email)
+                try:
+                    res = requests.post(
+                        "https://api.brevo.com/v3/smtp/email",
+                        headers={
+                            "api-key": brevo_key,
+                            "Content-Type": "application/json",
+                            "Accept": "application/json"
+                        },
+                        json={
+                            "sender": {"name": settings.SMTP_FROM_NAME or "Retentrix AI", "email": s_email},
+                            "to": [{"email": to_email.strip()}],
+                            "subject": f"{otp_code} is your Retentrix verification code",
+                            "htmlContent": html_content
+                        },
+                        timeout=7
+                    )
+                    print(f"[Brevo OTP Dispatch] From: {s_email} -> {to_email} | HTTP {res.status_code}: {res.text}")
+                    if res.status_code in [200, 201]:
+                        return True
+                    if "unauthorized" in res.text.lower() or res.status_code == 401:
+                        break
+                except Exception as e:
+                    print(f"[Brevo OTP Exception]: {e}")
 
         if getattr(settings, "SENDGRID_API_KEY", ""):
             try:
@@ -178,7 +196,53 @@ Contact on GitHub: https://github.com/krohitrkumar
 
     @staticmethod
     def send_retention_email(to_email: str, subject: str, body: str, sender_name: str = None, reply_to: str = None) -> bool:
-        if not to_email or not settings.SMTP_USER or not settings.SMTP_PASSWORD:
+        if not to_email:
+            return False
+
+        brevo_key = os.getenv("BREVO_API_KEY", "").strip() or getattr(settings, "BREVO_API_KEY", "").strip()
+        if brevo_key:
+            sender_candidates = []
+            custom_sender = os.getenv("BREVO_SENDER_EMAIL", "").strip() or getattr(settings, "BREVO_SENDER_EMAIL", "").strip()
+            if custom_sender:
+                sender_candidates.append(custom_sender)
+            if settings.SMTP_USER:
+                sender_candidates.append(settings.SMTP_USER.strip())
+            sender_candidates.extend(["rohitkumar.adgitm.aids@gmail.com", "ramn1237@gmail.com", "retentrix.security@gmail.com"])
+
+            display_from = f"{sender_name} via {settings.SMTP_FROM_NAME}" if sender_name else (settings.SMTP_FROM_NAME or "Retentrix AI")
+            seen_senders = set()
+            for s_email in sender_candidates:
+                if not s_email or s_email in seen_senders:
+                    continue
+                seen_senders.add(s_email)
+                try:
+                    payload = {
+                        "sender": {"name": display_from, "email": s_email},
+                        "to": [{"email": to_email.strip()}],
+                        "subject": subject,
+                        "textContent": body
+                    }
+                    if reply_to:
+                        payload["replyTo"] = {"email": reply_to}
+                    res = requests.post(
+                        "https://api.brevo.com/v3/smtp/email",
+                        headers={
+                            "api-key": brevo_key,
+                            "Content-Type": "application/json",
+                            "Accept": "application/json"
+                        },
+                        json=payload,
+                        timeout=7
+                    )
+                    print(f"[Brevo Retention Dispatch] From: {s_email} -> {to_email} | HTTP {res.status_code}: {res.text}")
+                    if res.status_code in [200, 201]:
+                        return True
+                    if "unauthorized" in res.text.lower() or res.status_code == 401:
+                        break
+                except Exception as e:
+                    print(f"[Brevo Retention Exception]: {e}")
+
+        if not settings.SMTP_USER or not settings.SMTP_PASSWORD:
             return False
 
         try:

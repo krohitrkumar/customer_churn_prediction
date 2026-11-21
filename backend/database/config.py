@@ -36,6 +36,7 @@ try:
         RESEND_API_KEY: str = ""
         BREVO_API_KEY: str = ""
         SENDGRID_API_KEY: str = ""
+        BREVO_SENDER_EMAIL: str = ""
         SMTP_HOST: str = "smtp.gmail.com"
         SMTP_PORT: int = 587
         SMTP_USER: str = ""
@@ -109,6 +110,9 @@ except ImportError:
         REDIS_URL: str = os.getenv("REDIS_URL", "")
 
         RESEND_API_KEY: str = os.getenv("RESEND_API_KEY", "")
+        BREVO_API_KEY: str = os.getenv("BREVO_API_KEY", "")
+        SENDGRID_API_KEY: str = os.getenv("SENDGRID_API_KEY", "")
+        BREVO_SENDER_EMAIL: str = os.getenv("BREVO_SENDER_EMAIL", "")
         SMTP_HOST: str = os.getenv("SMTP_HOST", "smtp.gmail.com")
         SMTP_PORT: int = int(os.getenv("SMTP_PORT", "587"))
         SMTP_USER: str = os.getenv("SMTP_USER", "")
